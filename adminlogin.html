@@ -1,0 +1,700 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFind | Admin Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f3f6fc;
+            min-height: 100vh;
+            color: #19365f;
+        }
+
+        /* Navbar */
+        nav {
+            height: 76px;
+            background: #ffffff;
+            padding: 0 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e8edf5;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: -0.7px;
+            color: #173b70;
+        }
+
+        .logo span {
+            color: #3478f6;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            color: #245bc4;
+        }
+
+        /* Main Layout */
+        main {
+            min-height: calc(100vh - 126px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 45px 20px;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            min-height: 570px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 55px rgba(23, 59, 112, 0.10);
+            border: 1px solid #e7ecf4;
+        }
+
+        /* Left Panel */
+        .brand-panel {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(145deg, #173b70, #245bc4);
+            color: white;
+            padding: 55px 42px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-panel::before {
+            content: "";
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border: 1px solid rgba(255,255,255,0.13);
+            border-radius: 50%;
+            right: -120px;
+            top: 60px;
+        }
+
+        .brand-panel::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 50%;
+            right: -70px;
+            top: 90px;
+        }
+
+        .brand-content,
+        .brand-bottom,
+        .brand-top {
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 13px;
+            background: rgba(255,255,255,0.15);
+            display: grid;
+            place-items: center;
+        }
+
+        .brand-icon svg {
+            width: 27px;
+            height: 27px;
+        }
+
+        .brand-name {
+            font-size: 22px;
+            font-weight: 750;
+        }
+
+        .brand-content {
+            margin: 60px 0;
+        }
+
+        .small-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #b9d4ff;
+            margin-bottom: 18px;
+        }
+
+        .brand-content h1 {
+            font-size: 36px;
+            line-height: 1.25;
+            letter-spacing: -1px;
+            margin-bottom: 18px;
+        }
+
+        .brand-content p {
+            color: #dbe8ff;
+            font-size: 14px;
+            line-height: 1.9;
+            max-width: 340px;
+        }
+
+        .feature-list {
+            display: grid;
+            gap: 17px;
+            margin-top: 30px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #f0f5ff;
+            font-size: 13px;
+        }
+
+        .check {
+            width: 25px;
+            height: 25px;
+            display: grid;
+            place-items: center;
+            background: rgba(255,255,255,0.14);
+            border-radius: 50%;
+            font-size: 13px;
+        }
+
+        .brand-bottom {
+            color: #c7d9f5;
+            font-size: 11px;
+        }
+
+        /* Right Login Form */
+        .form-panel {
+            padding: 55px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #edf3ff;
+            color: #245bc4;
+            padding: 8px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            background: #3478f6;
+            border-radius: 50%;
+        }
+
+        .form-panel h2 {
+            color: #173b70;
+            font-size: 29px;
+            letter-spacing: -0.7px;
+            margin-bottom: 10px;
+        }
+
+        .form-description {
+            color: #7b8799;
+            font-size: 13px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #344563;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 9px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            padding: 14px 14px;
+            border: 1px solid #dce3ed;
+            background: #fbfcfe;
+            border-radius: 9px;
+            outline: none;
+            color: #243b5a;
+            font-family: inherit;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .input-wrap input:focus {
+            border-color: #3478f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52,120,246,0.10);
+        }
+
+        .input-wrap input::placeholder {
+            color: #a0aaba;
+        }
+
+        .password-input {
+            padding-right: 70px !important;
+        }
+
+        .show-password {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #3478f6;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 2px 0 25px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #718096;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .remember input {
+            accent-color: #245bc4;
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            border: none;
+            background: transparent;
+            color: #3478f6;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            width: 100%;
+            border: none;
+            border-radius: 9px;
+            padding: 15px;
+            background: #245bc4;
+            color: white;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+
+        .login-btn:hover {
+            background: #173b70;
+            box-shadow: 0 6px 16px rgba(36,91,196,0.20);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        .message {
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.6;
+            margin-top: 13px;
+            min-height: 19px;
+        }
+
+        .form-security {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid #edf0f5;
+            color: #98a2b3;
+            font-size: 11px;
+        }
+
+        .form-security svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        footer {
+            text-align: center;
+            color: #98a2b3;
+            font-size: 11px;
+            padding: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            .login-wrapper {
+                max-width: 480px;
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel {
+                padding: 30px;
+            }
+
+            .brand-content {
+                margin: 35px 0;
+            }
+
+            .brand-content h1 {
+                font-size: 29px;
+            }
+
+            .feature-list {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .brand-bottom {
+                margin-top: 15px;
+            }
+
+            .form-panel {
+                padding: 38px 30px;
+            }
+
+            main {
+                padding: 25px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                height: 68px;
+                padding: 0 5%;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .back-link {
+                font-size: 12px;
+            }
+
+            .brand-panel {
+                padding: 25px 23px;
+            }
+
+            .brand-content h1 {
+                font-size: 27px;
+            }
+
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+
+            .form-panel {
+                padding: 32px 23px;
+            }
+
+            .form-panel h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">Campus<span>Find</span></div>
+        <a href="./index.html" class="back-link">← Back to Home</a>
+    </nav>
+
+    <main>
+        <div class="login-wrapper">
+
+            <!-- Left Branding Panel -->
+            <section class="brand-panel">
+
+                <div class="brand-top">
+                    <div class="brand-icon">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.7"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3 20 6v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"></path>
+                            <path d="m9 12 2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <div class="brand-name">CampusFind</div>
+                </div>
+
+                <div class="brand-content">
+                    <div class="small-label">ADMINISTRATOR PORTAL</div>
+
+                    <h1>Everything on campus, under control.</h1>
+
+                    <p>
+                        Manage lost and found reports, review claims,
+                        and coordinate item handovers from one place.
+                    </p>
+
+                    <div class="feature-list">
+                        <div class="feature">
+                            <span class="check">✓</span>
+                            <span>Manage reported items</span>
+                        </div>
+
+                        <div class="feature">
+                            <span class="check">✓</span>
+                            <span>Review student claims</span>
+                        </div>
+
+                        <div class="feature">
+                            <span class="check">✓</span>
+                            <span>Track item handovers</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="brand-bottom">
+                    CAMPUS MANAGEMENT MADE SIMPLE
+                </div>
+
+            </section>
+
+            <!-- Right Login Panel -->
+            <section class="form-panel">
+
+                <div class="admin-badge">
+                    <span class="status-dot"></span>
+                    ADMIN ACCESS
+                </div>
+
+                <h2>Welcome back</h2>
+
+                <p class="form-description">
+                    Sign in with your administrator credentials
+                    to continue to your dashboard.
+                </p>
+
+                <form id="adminLoginForm">
+
+                    <div class="input-group">
+                        <label for="username">Username</label>
+
+                        <div class="input-wrap">
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                placeholder="Enter your username"
+                                autocomplete="username"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Password</label>
+
+                        <div class="input-wrap">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="password-input"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="show-password"
+                            >
+                                Show
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember">
+                            <input type="checkbox" id="rememberMe">
+                            Remember me
+                        </label>
+
+                        <button
+                            type="button"
+                            id="forgotPassword"
+                            class="forgot-link"
+                        >
+                            Forgot password?
+                        </button>
+                    </div>
+
+                    <button type="submit" id="loginBtn" class="login-btn">
+                        Sign In to Dashboard&nbsp; →
+                    </button>
+
+                    <p id="message" class="message"
+                       role="status" aria-live="polite"></p>
+
+                </form>
+
+                <div class="form-security">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+                        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                    </svg>
+                    Authorized administrators only
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        © 2026 CampusFind. All rights reserved.
+    </footer>
+
+    <script>
+        const loginForm = document.getElementById("adminLoginForm");
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+        const togglePassword = document.getElementById("togglePassword");
+        const rememberMe = document.getElementById("rememberMe");
+        const forgotPassword = document.getElementById("forgotPassword");
+        const message = document.getElementById("message");
+        const loginBtn = document.getElementById("loginBtn");
+
+        // Show or hide the password
+        togglePassword.addEventListener("click", function () {
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                togglePassword.textContent = "Hide";
+            } else {
+                passwordInput.type = "password";
+                togglePassword.textContent = "Show";
+            }
+        });
+
+        // Restore the remembered username
+        const savedUsername = localStorage.getItem("campusfind_admin_username");
+
+        if (savedUsername) {
+            usernameInput.value = savedUsername;
+            rememberMe.checked = true;
+        }
+
+        // Forgot password option
+        forgotPassword.addEventListener("click", function () {
+            message.style.color = "#64748b";
+            message.textContent =
+                "Please contact your system administrator to reset your password.";
+        });
+
+        // Validate login and open the dashboard
+        loginForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!username || !password) {
+                message.style.color = "#d92d20";
+                message.textContent = "Please enter your username and password.";
+                return;
+            }
+
+            // Demo credentials for this frontend project
+            if (username === "admin" && password === "admin123") {
+
+                if (rememberMe.checked) {
+                    localStorage.setItem("campusfind_admin_username", username);
+                } else {
+                    localStorage.removeItem("campusfind_admin_username");
+                }
+
+                sessionStorage.setItem("adminLoggedIn", "true");
+                sessionStorage.setItem("userRole", "admin");
+
+                message.style.color = "#16803c";
+                message.textContent = "Login successful. Opening dashboard...";
+                loginBtn.disabled = true;
+
+                window.location.href = "./admindash.html";
+
+            } else {
+                message.style.color = "#d92d20";
+                message.textContent = "Invalid username or password. Please try again.";
+                passwordInput.value = "";
+                passwordInput.focus();
+            }
+        });
+    </script>
+
+</body>
+</html>

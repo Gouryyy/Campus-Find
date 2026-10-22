@@ -1,0 +1,26 @@
+{
+  "claims": [
+    {
+      "claimId": "CLM1001",
+      "itemId": "ITM101",
+      "itemName": "Black Wallet",
+      "claimantName": "Arun Kumar",
+      "claimantEmail": "arun@example.com",
+      "claimDate": "2026-10-20",
+      "proof": "Contains my college ID and identification details.",
+      "notes": "Verify ownership before handover.",
+      "status": "Pending"
+    },
+    {
+      "claimId": "CLM1002",
+      "itemId": "ITM102",
+      "itemName": "Scientific Calculator",
+      "claimantName": "Anjali Raj",
+      "claimantEmail": "anjali@example.com",
+      "claimDate": "2026-10-21",
+      "proof": "Can identify the model and unique marks on the calculator.",
+      "notes": "",
+      "status": "Approved"
+    }
+  ]
+}

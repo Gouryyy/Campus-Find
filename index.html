@@ -1,0 +1,295 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFind | Home</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f7fc;
+            color: #172b4d;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            height: 78px;
+            padding: 0 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            border-bottom: 1px solid #e8edf5;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 750;
+            color: #173b70;
+            letter-spacing: -0.7px;
+        }
+
+        .logo span {
+            color: #3478f6;
+        }
+
+        .nav-label {
+            font-size: 13px;
+            color: #667085;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Section */
+        main {
+            min-height: calc(100vh - 78px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .icon-box {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e4edff;
+            color: #245bc4;
+            border-radius: 20px;
+        }
+
+        .icon-box svg {
+            width: 38px;
+            height: 38px;
+        }
+
+        .tagline {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #3478f6;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        h1 {
+            font-size: clamp(36px, 6vw, 48px);
+            line-height: 1.15;
+            letter-spacing: -1.5px;
+            color: #173b70;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            max-width: 360px;
+            margin: 0 auto 35px;
+            color: #697586;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* Login Options */
+        .login-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            max-width: 440px;
+            margin: 0 auto;
+        }
+
+        .login-card {
+            text-decoration: none;
+            background: #ffffff;
+            border: 1px solid #e0e7f1;
+            border-radius: 13px;
+            padding: 24px 16px;
+            text-align: left;
+            transition: transform 0.2s, box-shadow 0.2s,
+                        border-color 0.2s;
+        }
+
+        .login-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(27, 55, 100, 0.10);
+            border-color: #8db4ff;
+        }
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: #edf3ff;
+            color: #245bc4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .card-icon svg {
+            width: 23px;
+            height: 23px;
+        }
+
+        .login-card h2 {
+            font-size: 17px;
+            color: #173b70;
+            margin-bottom: 8px;
+        }
+
+        .login-card p {
+            font-size: 12px;
+            color: #788496;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .continue {
+            color: #2463d4;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .admin .card-icon {
+            background: #edf0f5;
+            color: #45566f;
+        }
+
+        .admin .continue {
+            color: #45566f;
+        }
+
+        footer {
+            margin-top: 45px;
+            font-size: 12px;
+            color: #98a2b3;
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                padding: 0 6%;
+                height: 68px;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .nav-label {
+                font-size: 11px;
+            }
+
+            main {
+                min-height: calc(100vh - 68px);
+                padding: 35px 16px;
+            }
+
+            .login-options {
+                gap: 10px;
+            }
+
+            .login-card {
+                padding: 19px 12px;
+            }
+
+            .login-card h2 {
+                font-size: 15px;
+            }
+
+            .description {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">Campus<span>Find</span></div>
+        <div class="nav-label">CAMPUS LOST & FOUND</div>
+    </nav>
+
+    <main>
+        <div class="container">
+
+            <div class="icon-box">
+                <svg viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.7"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="10.5" cy="10.5" r="6.5"></circle>
+                    <path d="m15.5 15.5 5 5"></path>
+                    <path d="M8 10.5h5"></path>
+                    <path d="M10.5 8v5"></path>
+                </svg>
+            </div>
+
+            <div class="tagline">Find. Recover. Reconnect.</div>
+
+            <h1>Welcome to<br>CampusFind</h1>
+
+            <p class="description">
+                A smarter way to report, discover, and recover
+                lost belongings on campus.
+            </p>
+
+            <div class="login-options">
+
+                <a href="./login.html" class="login-card">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="4"></circle>
+                            <path d="M4 21v-2a8 8 0 0 1 16 0v2"></path>
+                        </svg>
+                    </div>
+
+                    <h2>Student Login</h2>
+                    <p>Report and find lost items.</p>
+                    <div class="continue">Continue →</div>
+                </a>
+
+                <a href="./adminlogin.html" class="login-card admin">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3 20 6v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"></path>
+                            <path d="m9 12 2 2 4-4"></path>
+                        </svg>
+                    </div>
+
+                    <h2>Admin Login</h2>
+                    <p>Manage items and claims.</p>
+                    <div class="continue">Continue →</div>
+                </a>
+
+            </div>
+
+            <footer>
+                © 2026 CampusFind. All rights reserved.
+            </footer>
+
+        </div>
+    </main>
+
+</body>
+</html>

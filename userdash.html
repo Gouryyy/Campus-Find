@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFind | Student Dashboard</title>
+
+    <style>
+        :root {
+            --primary: #3448c5;
+            --primary-dark: #26369e;
+            --bg: #f4f6fb;
+            --white: #ffffff;
+            --text: #202842;
+            --muted: #737d94;
+            --border: #e4e8f1;
+            --green: #17845d;
+            --orange: #b76a08;
+            --red: #c03945;
+            --shadow: 0 5px 20px rgba(31, 45, 90, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+        }
+
+        button, a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 245px;
+            background: #202b59;
+            color: white;
+            padding: 26px 16px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: 800;
+            padding: 0 12px 8px;
+        }
+
+        .brand span {
+            color: #9fafff;
+        }
+
+        .brand-subtitle {
+            padding: 0 12px;
+            color: #c5cce8;
+            font-size: 12px;
+            margin-bottom: 34px;
+        }
+
+        .nav-label {
+            color: #aab5df;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1.4px;
+            padding: 0 12px;
+            margin-bottom: 12px;
+        }
+
+        .nav-button {
+            width: 100%;
+            border: none;
+            color: #e2e7ff;
+            background: transparent;
+            padding: 13px 14px;
+            margin-bottom: 6px;
+            border-radius: 9px;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .nav-button:hover,
+        .nav-button.active {
+            background: #39477d;
+            color: white;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 25px;
+        }
+
+        .sidebar-note {
+            color: #cbd3f3;
+            background: rgba(255,255,255,0.07);
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .logout-button {
+            width: 100%;
+            padding: 12px;
+            color: white;
+            background: #a43f55;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background: #873247;
+        }
+
+        .main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .topbar {
+            min-height: 82px;
+            padding: 18px 32px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .topbar h2 {
+            font-size: 21px;
+        }
+
+        .topbar p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #e5e9ff;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 17px;
+        }
+
+        .user-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .user-info small {
+            color: var(--muted);
+            display: block;
+            margin-top: 4px;
+        }
+
+        .content {
+            padding: 28px 32px;
+            max-width: 1500px;
+            margin: auto;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .welcome {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .welcome h1 {
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .primary-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 17px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .primary-button:hover {
+            background: var(--primary-dark);
+        }
+
+        .secondary-button {
+            background: #edf0ff;
+            color: var(--primary);
+            border: 1px solid #dce2ff;
+            padding: 9px 12px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .danger-button {
+            background: #fff0f0;
+            color: var(--red);
+            border: 1px solid #ffd6d6;
+            padding: 8px 10px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 17px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 21px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .stat-title {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .stat-icon {
+            width: 39px;
+            height: 39px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            font-size: 19px;
+            background: #edf0ff;
+        }
+
+        .stat-number {
+            font-size: 30px;
+            font-weight: 800;
+        }
+
+        .stat-description {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 7px;
+        }
+
+        .section-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 23px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .section-heading h2 {
+            font-size: 18px;
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .quick-action {
+            border: 1px solid var(--border);
+            background: #fff;
+            padding: 20px;
+            text-align: left;
+            border-radius: 11px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .quick-action:hover {
+            border-color: #aebaff;
+            transform: translateY(-2px);
+        }
+
+        .quick-action .action-icon {
+            font-size: 25px;
+            margin-bottom: 13px;
+        }
+
+        .quick-action strong {
+            display: block;
+            margin-bottom: 7px;
+        }
+
+        .quick-action p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: minmax(180px, 2fr) repeat(2, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .field {
+            margin-bottom: 17px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .field input,
+        .field select,
+        .field textarea,
+        .filters input,
+        .filters select {
+            width: 100%;
+            border: 1px solid #dce1ec;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            outline: none;
+            color: var(--text);
+        }
+
+        .field textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .field input:focus,
+        .field select:focus,
+        .field textarea:focus,
+        .filters input:focus,
+        .filters select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52,72,197,0.09);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0 18px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+            vertical-align: top;
+            font-size: 13px;
+        }
+
+        th {
+            color: var(--muted);
+            background: #f8f9fd;
+            font-weight: 700;
+        }
+
+        td {
+            line-height: 1.5;
+        }
+
+        .item-name {
+            font-weight: 700;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            background: #eef1f6;
+            color: #5e6676;
+        }
+
+        .status.pending {
+            background: #fff2d9;
+            color: var(--orange);
+        }
+
+        .status.approved,
+        .status.completed {
+            background: #ddf7eb;
+            color: var(--green);
+        }
+
+        .status.rejected {
+            background: #ffe5e5;
+            color: var(--red);
+        }
+
+        .status.claimed {
+            background: #e5eaff;
+            color: var(--primary);
+        }
+
+        .empty-state {
+            padding: 35px 15px;
+            text-align: center;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .empty-state strong {
+            color: var(--text);
+            display: block;
+            margin-bottom: 7px;
+        }
+
+        .message {
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            border-radius: 8px;
+            display: none;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .message.success {
+            display: block;
+            color: #126747;
+            background: #e0f8ec;
+        }
+
+        .message.error {
+            display: block;
+            color: #9f2833;
+            background: #ffebed;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .profile-avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: #e5e9ff;
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .profile-detail {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .profile-detail span {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .profile-detail strong {
+            overflow-wrap: anywhere;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 10px 20px 25px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        @media (max-width: 1100px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .content {
+                padding: 24px 20px;
+            }
+
+            .topbar {
+                padding: 18px 20px;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 17px;
+            }
+
+            .brand {
+                padding-left: 4px;
+            }
+
+            .brand-subtitle {
+                padding-left: 4px;
+                margin-bottom: 18px;
+            }
+
+            .nav-label {
+                padding-left: 4px;
+            }
+
+            .nav-list {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 4px;
+            }
+
+            .nav-button {
+                margin: 0;
+                padding: 11px 8px;
+                font-size: 12px;
+            }
+
+            .sidebar-bottom {
+                padding-top: 14px;
+            }
+
+            .sidebar-note {
+                display: none;
+            }
+
+            .logout-button {
+                margin-top: 12px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .user-info {
+                gap: 7px;
+            }
+
+            .user-info small {
+                display: none;
+            }
+
+            .content {
+                padding: 20px 14px;
+            }
+
+            .welcome {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .welcome h1 {
+                font-size: 23px;
+            }
+
+            .stats {
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-number {
+                font-size: 25px;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .filters,
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+
+            .section-card {
+                padding: 16px;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar h2 {
+                font-size: 17px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">Campus<span>Find</span></div>
+        <div class="brand-subtitle">Smart Campus Lost &amp; Found</div>
+
+        <div class="nav-label">STUDENT MENU</div>
+
+        <nav class="nav-list">
+            <button class="nav-button active" data-page="overview">
+                <span class="nav-icon">▦</span> Dashboard
+            </button>
+            <button class="nav-button" data-page="browse">
+                <span class="nav-icon">⌕</span> Browse Items
+            </button>
+            <button class="nav-button" data-page="report">
+                <span class="nav-icon">＋</span> Report an Item
+            </button>
+            <button class="nav-button" data-page="myreports">
+                <span class="nav-icon">▤</span> My Reports
+            </button>
+            <button class="nav-button" data-page="myclaims">
+                <span class="nav-icon">✓</span> My Claims
+            </button>
+            <button class="nav-button" data-page="profile">
+                <span class="nav-icon">♙</span> My Profile
+            </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-note">
+                Lost something on campus?<br>
+                Report it or browse found items to help reunite people with their belongings.
+            </div>
+            <button class="logout-button" id="logoutBtn">↪ Log Out</button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h2 id="pageTitle">Student Dashboard</h2>
+                <p id="todayText">Your campus activity at a glance</p>
+            </div>
+
+            <div class="user-info">
+                <div class="avatar" id="headerAvatar">S</div>
+                <div>
+                    <strong id="headerName">Student</strong>
+                    <small>Student Account</small>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- DASHBOARD OVERVIEW -->
+            <section class="page active" id="overview">
+                <div class="welcome">
+                    <div>
+                        <h1>Welcome, <span id="welcomeName">Student</span>! 👋</h1>
+                        <p>Find lost belongings, report found items, and track your activity.</p>
+                    </div>
+                    <button class="primary-button" data-go="report">+ Report an Item</button>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-title">Available Items</span>
+                            <span class="stat-icon">🔎</span>
+                        </div>
+                        <div class="stat-number" id="availableCount">0</div>
+                        <div class="stat-description">Items available to browse</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-title">My Reports</span>
+                            <span class="stat-icon">📋</span>
+                        </div>
+                        <div class="stat-number" id="reportsCount">0</div>
+                        <div class="stat-description">Items reported by you</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-title">My Claims</span>
+                            <span class="stat-icon">🤝</span>
+                        </div>
+                        <div class="stat-number" id="claimsCount">0</div>
+                        <div class="stat-description">Claims submitted by you</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span class="stat-title">Pending Claims</span>
+                            <span class="stat-icon">⏳</span>
+                        </div>
+                        <div class="stat-number" id="pendingCount">0</div>
+                        <div class="stat-description">Claims awaiting a decision</div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Quick Actions</h2>
+                            <p>What would you like to do today?</p>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button class="quick-action" data-go="browse">
+                            <div class="action-icon">🔍</div>
+                            <strong>Find an Item</strong>
+                            <p>Search items reported as found on campus.</p>
+                        </button>
+
+                        <button class="quick-action" data-go="report">
+                            <div class="action-icon">📝</div>
+                            <strong>Report an Item</strong>
+                            <p>Report something you lost or found.</p>
+                        </button>
+
+                        <button class="quick-action" data-go="myclaims">
+                            <div class="action-icon">📌</div>
+                            <strong>Track My Claims</strong>
+                            <p>Check the latest status of your claims.</p>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Recently Reported Items</h2>
+                            <p>Latest items added to CampusFind.</p>
+                        </div>
+                        <button class="secondary-button" data-go="browse">View All</button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Category</th>
+                                    <th>Type</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentItemsBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="empty-state" id="recentEmpty">
+                        <strong>No items reported yet</strong>
+                        New reports will appear here.
+                    </div>
+                </div>
+            </section>
+
+            <!-- BROWSE ITEMS -->
+            <section class="page" id="browse">
+                <div class="welcome">
+                    <div>
+                        <h1>Browse Items</h1>
+                        <p>Search for lost and found belongings around your campus.</p>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="filters">
+                        <input id="searchInput" type="search"
+                               placeholder="Search item, location, or description..."
+                               aria-label="Search items">
+
+                        <select id="categoryFilter" aria-label="Filter by category">
+                            <option value="">All Categories</option>
+                            <option>Electronics</option>
+                            <option>Books</option>
+                            <option>Documents</option>
+                            <option>Accessories</option>
+                            <option>Clothing</option>
+                            <option>Bags</option>
+                            <option>Keys</option>
+                            <option>Other</option>
+                        </select>
+
+                        <select id="typeFilter" aria-label="Filter by report type">
+                            <option value="">Lost and Found</option>
+                            <option value="Found">Found Items</option>
+                            <option value="Lost">Lost Items</option>
+                        </select>
+                    </div>
+
+                    <div class="section-heading">
+                        <div>
+                            <h2>Campus Items</h2>
+                            <p id="browseResultCount">0 items found</p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Item Details</th>
+                                    <th>Category</th>
+                                    <th>Report Type</th>
+                                    <th>Location</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="browseItemsBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="empty-state" id="browseEmpty" hidden>
+                        <strong>No matching items found</strong>
+                        Try changing your search or filters.
+                    </div>
+                </div>
+            </section>
+
+            <!-- REPORT ITEM -->
+            <section class="page" id="report">
+                <div class="welcome">
+                    <div>
+                        <h1>Report an Item</h1>
+                        <p>Provide accurate details to help reunite belongings with their owners.</p>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Item Report Form</h2>
+                            <p>Fields marked with * are required.</p>
+                        </div>
+                    </div>
+
+                    <div class="message" id="reportMessage" role="status"></div>
+
+                    <form id="reportForm">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="itemName">Item Name *</label>
+                                <input id="itemName" name="itemName" required
+                                       maxlength="100" placeholder="e.g. Black wallet">
+                            </div>
+
+                            <div class="field">
+                                <label for="reportType">Report Type *</label>
+                                <select id="reportType" name="reportType" required>
+                                    <option value="">Select report type</option>
+                                    <option value="Lost">I lost an item</option>
+                                    <option value="Found">I found an item</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label for="itemCategory">Category *</label>
+                                <select id="itemCategory" name="category" required>
+                                    <option value="">Select category</option>
+                                    <option>Electronics</option>
+                                    <option>Books</option>
+                                    <option>Documents</option>
+                                    <option>Accessories</option>
+                                    <option>Clothing</option>
+                                    <option>Bags</option>
+                                    <option>Keys</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label for="itemLocation">Location *</label>
+                                <input id="itemLocation" name="location" required
+                                       maxlength="150"
+                                       placeholder="e.g. College library">
+                            </div>
+
+                            <div class="field">
+                                <label for="reportDate">Date Lost / Found *</label>
+                                <input id="reportDate" name="reportDate"
+                                       type="date" required>
+                            </div>
+
+                            <div class="field">
+                                <label for="reporterName">Your Name</label>
+                                <input id="reporterName" name="reporter" readonly>
+                            </div>
+
+                            <div class="field full-width">
+                                <label for="itemDescription">Description *</label>
+                                <textarea id="itemDescription" name="description"
+                                          required maxlength="1000"
+                                          placeholder="Describe the item, including identifying features. Avoid posting sensitive information."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="primary-button">Submit Report</button>
+                            <button type="reset" class="secondary-button">Clear Form</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- MY REPORTS -->
+            <section class="page" id="myreports">
+                <div class="welcome">
+                    <div>
+                        <h1>My Reports</h1>
+                        <p>View the items you have reported and their current status.</p>
+                    </div>
+                    <button class="primary-button" data-go="report">+ New Report</button>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Your Submitted Reports</h2>
+                            <p id="myReportsSummary">0 reports</p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Location</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myReportsBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="empty-state" id="myReportsEmpty">
+                        <strong>You haven't submitted any reports yet.</strong>
+                        Use the report form to add your first item.
+                    </div>
+                </div>
+            </section>
+
+            <!-- MY CLAIMS -->
+            <section class="page" id="myclaims">
+                <div class="welcome">
+                    <div>
+                        <h1>My Claims</h1>
+                        <p>Track claims you have submitted for found items.</p>
+                    </div>
+                    <button class="secondary-button" data-go="browse">Browse Items</button>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Claim History</h2>
+                            <p id="myClaimsSummary">0 claims</p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Claim ID</th>
+                                    <th>Claim Date</th>
+                                    <th>Proof / Notes</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myClaimsBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="empty-state" id="myClaimsEmpty">
+                        <strong>No claims submitted yet.</strong>
+                        Browse found items and select Claim Item if you recognise your belongings.
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROFILE -->
+            <section class="page" id="profile">
+                <div class="welcome">
+                    <div>
+                        <h1>My Profile</h1>
+                        <p>Your student account details.</p>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="profile-grid">
+                        <div>
+                            <div class="profile-avatar" id="profileAvatar">S</div>
+                            <strong id="profileName">Student</strong>
+                            <p class="muted" style="font-size:13px;margin-top:6px;">Student Account</p>
+                        </div>
+
+                        <div>
+                            <div class="profile-detail">
+                                <span>Full Name</span>
+                                <strong id="profileFullName">—</strong>
+                            </div>
+                            <div class="profile-detail">
+                                <span>Email Address</span>
+                                <strong id="profileEmail">—</strong>
+                            </div>
+                            <div class="profile-detail">
+                                <span>Account Type</span>
+                                <strong>Student</strong>
+                            </div>
+                            <div class="profile-detail">
+                                <span>Reports Submitted</span>
+                                <strong id="profileReports">0</strong>
+                            </div>
+                            <div class="profile-detail">
+                                <span>Claims Submitted</span>
+                                <strong id="profileClaims">0</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="footer">
+            CampusFind — Smart Campus Lost &amp; Found Management System
+        </footer>
+    </main>
+</div>
+
+<script>
+    "use strict";
+
+    // --------------------------------------------------
+    // 1. CHECK STUDENT LOGIN
+    // --------------------------------------------------
+    const studentLoggedIn = sessionStorage.getItem("studentLoggedIn");
+    const userRole = sessionStorage.getItem("userRole");
+
+    if (studentLoggedIn !== "true" || userRole !== "student") {
+        window.location.replace("login.html");
+    }
+
+    const studentName = sessionStorage.getItem("studentName") || "Student";
+    const studentEmail = (sessionStorage.getItem("studentEmail") || "")
+        .trim().toLowerCase();
+
+    // These keys must match the admin pages.
+    const ITEMS_KEY = "campusfind_items";
+    const CLAIMS_KEY = "campusfind_claims";
+
+    const $ = (id) => document.getElementById(id);
+
+    // --------------------------------------------------
+    // 2. SAFE LOCALSTORAGE HELPERS
+    // --------------------------------------------------
+    function readArray(key) {
+        try {
+            const value = JSON.parse(localStorage.getItem(key) || "[]");
+            return Array.isArray(value) ? value : [];
+        } catch (error) {
+            console.error("Could not read " + key, error);
+            return [];
+        }
+    }
+
+    function saveArray(key, data) {
+        try {
+            localStorage.setItem(key, JSON.stringify(data));
+            return true;
+        } catch (error) {
+            console.error("Could not save " + key, error);
+            alert("Your browser could not save this data. Check available storage.");
+            return false;
+        }
+    }
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function (char) {
+            const entities = {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            };
+            return entities[char];
+        });
+    }
+
+    function normalise(value) {
+        return String(value ?? "").trim().toLowerCase();
+    }
+
+    function getItemStatus(item) {
+        return item.itemStatus || item.status || "Pending";
+    }
+
+    function getReportType(item) {
+        return item.reportType || item.type || "—";
+    }
+
+    function getReportDate(item) {
+        return item.reportDate || item.date || "—";
+    }
+
+    function formatDate(value) {
+        if (!value || value === "—") return "—";
+
+        // ISO date strings from input[type=date] are parsed locally
+        // to avoid a one-day timezone shift.
+        const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value));
+
+        if (match) {
+            return match[3] + "/" + match[2] + "/" + match[1];
+        }
+
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return String(value);
+
+        return date.toLocaleDateString("en-IN");
+    }
+
+    function todayISO() {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    }
+
+    function makeId(prefix) {
+        return prefix + "-" + Date.now().toString(36).toUpperCase()
+            + "-" + Math.random().toString(36).slice(2, 7).toUpperCase();
+    }
+
+    function setStatusBadge(status) {
+        const text = String(status || "Pending");
+        let className = "status";
+
+        if (/pending/i.test(text)) className += " pending";
+        else if (/approved/i.test(text)) className += " approved";
+        else if (/completed/i.test(text)) className += " completed";
+        else if (/rejected/i.test(text)) className += " rejected";
+        else if (/claimed|handed over/i.test(text)) className += " claimed";
+
+        return `<span class="${className}">${escapeHTML(text)}</span>`;
+    }
+
+    function isOwnRecord(record) {
+        const email = normalise(record.reporterEmail || record.claimantEmail);
+        if (studentEmail && email) return email === studentEmail;
+
+        // Fallback for older demo records without email.
+        return normalise(record.reporter || record.claimantName) === normalise(studentName);
+    }
+
+    function getMyReports() {
+        return readArray(ITEMS_KEY).filter(item => {
+            return isOwnRecord(item) &&
+                normalise(item.reporterEmail || "") === studentEmail;
+        });
+    }
+
+    function getMyClaims() {
+        return readArray(CLAIMS_KEY).filter(claim => {
+            return isOwnRecord(claim) &&
+                normalise(claim.claimantEmail || "") === studentEmail;
+        });
+    }
+
+    function getInitials(name) {
+        const words = String(name || "Student").trim().split(/\s+/);
+        return words.slice(0, 2).map(word => word.charAt(0)).join("").toUpperCase();
+    }
+
+    // --------------------------------------------------
+    // 3. SET UP PROFILE AND PAGE NAVIGATION
+    // --------------------------------------------------
+    $("headerName").textContent = studentName;
+    $("welcomeName").textContent = studentName;
+    $("reporterName").value = studentName;
+    $("headerAvatar").textContent = getInitials(studentName);
+    $("profileAvatar").textContent = getInitials(studentName);
+    $("profileName").textContent = studentName;
+    $("profileFullName").textContent = studentName;
+    $("profileEmail").textContent = studentEmail || "No email available";
+
+    $("todayText").textContent = new Date().toLocaleDateString("en-IN", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+
+    $("reportDate").max = todayISO();
+    $("reportDate").value = todayISO();
+
+    const pageTitles = {
+        overview: "Student Dashboard",
+        browse: "Browse Items",
+        report: "Report an Item",
+        myreports: "My Reports",
+        myclaims: "My Claims",
+        profile: "My Profile"
+    };
+
+    function showPage(pageId) {
+        const page = $(pageId);
+        if (!page) return;
+
+        document.querySelectorAll(".page").forEach(section => {
+            section.classList.toggle("active", section.id === pageId);
+        });
+
+        document.querySelectorAll(".nav-button").forEach(button => {
+            button.classList.toggle("active", button.dataset.page === pageId);
+        });
+
+        $("pageTitle").textContent = pageTitles[pageId] || "CampusFind";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        if (pageId === "browse") renderBrowseItems();
+        if (pageId === "myreports") renderMyReports();
+        if (pageId === "myclaims") renderMyClaims();
+        if (pageId === "overview") renderOverview();
+        if (pageId === "profile") renderProfile();
+    }
+
+    document.querySelectorAll("[data-page]").forEach(button => {
+        button.addEventListener("click", () => showPage(button.dataset.page));
+    });
+
+    document.querySelectorAll("[data-go]").forEach(button => {
+        button.addEventListener("click", () => showPage(button.dataset.go));
+    });
+
+    $("logoutBtn").addEventListener("click", function () {
+        if (confirm("Are you sure you want to log out?")) {
+            sessionStorage.removeItem("studentLoggedIn");
+            sessionStorage.removeItem("userRole");
+            sessionStorage.removeItem("studentName");
+            sessionStorage.removeItem("studentEmail");
+            window.location.href = "index.html";
+        }
+    });
+
+    // --------------------------------------------------
+    // 4. DASHBOARD OVERVIEW
+    // --------------------------------------------------
+    function renderOverview() {
+        const items = readArray(ITEMS_KEY);
+        const claims = getMyClaims();
+        const reports = getMyReports();
+
+        const availableItems = items.filter(item => {
+            const status = normalise(getItemStatus(item));
+            return getReportType(item).toLowerCase() === "found" &&
+                status !== "claimed" &&
+                status !== "handed over" &&
+                status !== "completed" &&
+                status !== "rejected";
+        });
+
+        const pendingClaims = claims.filter(claim =>
+            normalise(claim.status || "Pending") === "pending"
+        );
+
+        $("availableCount").textContent = availableItems.length;
+        $("reportsCount").textContent = reports.length;
+        $("claimsCount").textContent = claims.length;
+        $("pendingCount").textContent = pendingClaims.length;
+
+        const recent = [...items].sort((a, b) =>
+            String(b.createdAt || b.reportDate || b.date || "")
+                .localeCompare(String(a.createdAt || a.reportDate || a.date || ""))
+        ).slice(0, 5);
+
+        $("recentItemsBody").innerHTML = recent.map(item => `
+            <tr>
+                <td><span class="item-name">${escapeHTML(item.itemName || item.name || "Unnamed item")}</span></td>
+                <td>${escapeHTML(item.category || "Other")}</td>
+                <td>${escapeHTML(getReportType(item))}</td>
+                <td>${escapeHTML(item.location || "—")}</td>
+                <td>${setStatusBadge(getItemStatus(item))}</td>
+            </tr>
+        `).join("");
+
+        $("recentEmpty").hidden = recent.length > 0;
+    }
+
+    // --------------------------------------------------
+    // 5. BROWSE, SEARCH AND FILTER ITEMS
+    // --------------------------------------------------
+    $("searchInput").addEventListener("input", renderBrowseItems);
+    $("categoryFilter").addEventListener("change", renderBrowseItems);
+    $("typeFilter").addEventListener("change", renderBrowseItems);
+
+    function renderBrowseItems() {
+        const allItems = readArray(ITEMS_KEY);
+
+        const search = normalise($("searchInput").value);
+        const category = $("categoryFilter").value;
+        const type = $("typeFilter").value;
+
+        const filtered = allItems.filter(item => {
+            const text = [
+                item.itemName, item.name, item.category,
+                item.location, item.description, item.reportType
+            ].map(normalise).join(" ");
+
+            const matchesSearch = !search || text.includes(search);
+            const matchesCategory = !category || item.category === category;
+            const matchesType = !type || getReportType(item) === type;
+
+            return matchesSearch && matchesCategory && matchesType;
+        });
+
+        $("browseResultCount").textContent =
+            filtered.length + (filtered.length === 1 ? " item found" : " items found");
+
+        $("browseItemsBody").innerHTML = filtered.map(item => {
+            const itemId = String(item.itemId || item.id || "");
+            const typeName = getReportType(item);
+            const status = getItemStatus(item);
+            const isFound = typeName.toLowerCase() === "found";
+            const canClaim = isFound &&
+                !/claimed|handed over|completed|rejected/i.test(status);
+
+            return `
+                <tr>
+                    <td>
+                        <span class="item-name">${escapeHTML(item.itemName || item.name || "Unnamed item")}</span>
+                        <br><span class="muted">${escapeHTML(item.description || "")}</span>
+                    </td>
+                    <td>${escapeHTML(item.category || "Other")}</td>
+                    <td>${escapeHTML(typeName)}</td>
+                    <td>${escapeHTML(item.location || "—")}</td>
+                    <td>${escapeHTML(formatDate(getReportDate(item)))}</td>
+                    <td>${setStatusBadge(status)}</td>
+                    <td>
+                        ${canClaim
+                            ? `<button class="primary-button claim-button"
+                                  data-item-id="${escapeHTML(itemId)}"
+                                  style="padding:8px 10px;font-size:12px">Claim Item</button>`
+                            : `<span class="muted">${isFound ? "Unavailable" : "—"}</span>`
+                        }
+                    </td>
+                </tr>
+            `;
+        }).join("");
+
+        $("browseEmpty").hidden = filtered.length > 0;
+
+        $("browseItemsBody").querySelectorAll(".claim-button").forEach(button => {
+            button.addEventListener("click", () => {
+                submitClaim(button.dataset.itemId);
+            });
+        });
+    }
+
+    // --------------------------------------------------
+    // 6. SUBMIT A CLAIM
+    // --------------------------------------------------
+    function submitClaim(itemId) {
+        const items = readArray(ITEMS_KEY);
+        const item = items.find(entry =>
+            String(entry.itemId || entry.id || "") === String(itemId)
+        );
+
+        if (!item) {
+            alert("This item could not be found. Refresh and try again.");
+            return;
+        }
+
+        if (getReportType(item).toLowerCase() !== "found") {
+            alert("You can only claim items reported as found.");
+            return;
+        }
+
+        const status = normalise(getItemStatus(item));
+        if (["claimed", "handed over", "completed", "rejected"].includes(status)) {
+            alert("This item is no longer available to claim.");
+            renderBrowseItems();
+            return;
+        }
+
+        const claims = readArray(CLAIMS_KEY);
+        const alreadyClaimed = claims.some(claim =>
+            String(claim.itemId) === String(itemId) &&
+            normalise(claim.claimantEmail) === studentEmail &&
+            !["rejected"].includes(normalise(claim.status))
+        );
+
+        if (alreadyClaimed) {
+            alert("You have already submitted a claim for this item.");
+            return;
+        }
+
+        const proof = prompt(
+            "Describe how you can identify or prove ownership of this item:"
+        );
+
+        if (proof === null) return;
+
+        if (!proof.trim()) {
+            alert("Please enter proof or identifying details.");
+            return;
+        }
+
+        const notes = prompt("Additional notes (optional):") || "";
+
+        const claim = {
+            claimId: makeId("CLM"),
+            itemId: item.itemId || item.id,
+            itemName: item.itemName || item.name || "Unnamed item",
+            claimantName: studentName,
+            claimantEmail: studentEmail,
+            claimDate: todayISO(),
+            proof: proof.trim(),
+            notes: notes.trim(),
+            status: "Pending"
+        };
+
+        claims.push(claim);
+
+        if (saveArray(CLAIMS_KEY, claims)) {
+            alert("Claim submitted successfully! You can track it in My Claims.");
+            renderOverview();
+            renderBrowseItems();
+        }
+    }
+
+    // --------------------------------------------------
+    // 7. SUBMIT A LOST / FOUND REPORT
+    // --------------------------------------------------
+    $("reportForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const reportDate = $("reportDate").value;
+
+        if (reportDate && reportDate > todayISO()) {
+            showReportMessage("The report date cannot be in the future.", "error");
+            return;
+        }
+
+        const items = readArray(ITEMS_KEY);
+
+        const newItem = {
+            itemId: makeId("ITM"),
+            itemName: $("itemName").value.trim(),
+            category: $("itemCategory").value,
+            reportType: $("reportType").value,
+            reporter: studentName,
+            reporterEmail: studentEmail,
+            location: $("itemLocation").value.trim(),
+            reportDate: reportDate,
+            description: $("itemDescription").value.trim(),
+            itemStatus: "Pending",
+            createdAt: new Date().toISOString()
+        };
+
+        if (!newItem.itemName || !newItem.reportType ||
+            !newItem.category || !newItem.location ||
+            !newItem.reportDate || !newItem.description) {
+            showReportMessage("Please fill in all required fields.", "error");
+            return;
+        }
+
+        items.push(newItem);
+
+        if (saveArray(ITEMS_KEY, items)) {
+            $("reportForm").reset();
+            $("reporterName").value = studentName;
+            $("reportDate").value = todayISO();
+
+            showReportMessage(
+                "Your " + newItem.reportType.toLowerCase() +
+                " item report was submitted successfully!",
+                "success"
+            );
+
+            renderOverview();
+        }
+    });
+
+    function showReportMessage(message, type) {
+        const box = $("reportMessage");
+        box.textContent = message;
+        box.className = "message " + type;
+    }
+
+    $("reportForm").addEventListener("reset", function () {
+        setTimeout(() => {
+            $("reporterName").value = studentName;
+            $("reportDate").value = todayISO();
+            $("reportMessage").className = "message";
+            $("reportMessage").textContent = "";
+        }, 0);
+    });
+
+    // --------------------------------------------------
+    // 8. MY REPORTS
+    // --------------------------------------------------
+    function renderMyReports() {
+        const reports = getMyReports();
+
+        $("myReportsSummary").textContent =
+            reports.length + (reports.length === 1 ? " report" : " reports");
+
+        $("myReportsBody").innerHTML = reports.map(item => `
+            <tr>
+                <td>
+                    <span class="item-name">${escapeHTML(item.itemName || item.name || "Unnamed item")}</span>
+                    <br><span class="muted">${escapeHTML(item.description || "")}</span>
+                </td>
+                <td>${escapeHTML(getReportType(item))}</td>
+                <td>${escapeHTML(item.category || "Other")}</td>
+                <td>${escapeHTML(item.location || "—")}</td>
+                <td>${escapeHTML(formatDate(getReportDate(item)))}</td>
+                <td>${setStatusBadge(getItemStatus(item))}</td>
+            </tr>
+        `).join("");
+
+        $("myReportsEmpty").hidden = reports.length > 0;
+    }
+
+    // --------------------------------------------------
+    // 9. MY CLAIMS
+    // --------------------------------------------------
+    function renderMyClaims() {
+        const claims = getMyClaims();
+
+        $("myClaimsSummary").textContent =
+            claims.length + (claims.length === 1 ? " claim" : " claims");
+
+        $("myClaimsBody").innerHTML = claims.map(claim => `
+            <tr>
+                <td><span class="item-name">${escapeHTML(claim.itemName || "Item")}</span></td>
+                <td>${escapeHTML(claim.claimId || "—")}</td>
+                <td>${escapeHTML(formatDate(claim.claimDate))}</td>
+                <td>
+                    ${escapeHTML(claim.proof || "—")}
+                    ${claim.notes
+                        ? `<br><span class="muted">Notes: ${escapeHTML(claim.notes)}</span>`
+                        : ""}
+                </td>
+                <td>${setStatusBadge(claim.status || "Pending")}</td>
+            </tr>
+        `).join("");
+
+        $("myClaimsEmpty").hidden = claims.length > 0;
+    }
+
+    // --------------------------------------------------
+    // 10. PROFILE DETAILS
+    // --------------------------------------------------
+    function renderProfile() {
+        $("profileReports").textContent = getMyReports().length;
+        $("profileClaims").textContent = getMyClaims().length;
+    }
+
+    // --------------------------------------------------
+    // 11. INITIAL LOAD AND CROSS-TAB UPDATES
+    // --------------------------------------------------
+    function refreshDashboard() {
+        renderOverview();
+        renderBrowseItems();
+        renderMyReports();
+        renderMyClaims();
+        renderProfile();
+    }
+
+    // Update when admin changes items or claims in another tab.
+    window.addEventListener("storage", function (event) {
+        if (event.key === ITEMS_KEY || event.key === CLAIMS_KEY || event.key === null) {
+            refreshDashboard();
+        }
+    });
+
+    refreshDashboard();
+    
+// Submit a claim from the student dashboard
+$(document).on("click", ".claim-button", function () {
+    const itemId = String($(this).attr("data-item-id"));
+
+    const studentName = sessionStorage.getItem("studentName");
+    const studentEmail = sessionStorage.getItem("studentEmail");
+
+    if (!studentName || !studentEmail) {
+        alert("Please log in again.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    let items = JSON.parse(
+        localStorage.getItem("campusfind_items") || "[]"
+    );
+
+    let claims = JSON.parse(
+        localStorage.getItem("campusfind_claims") || "[]"
+    );
+
+    const item = items.find(
+        item => String(item.itemId) === itemId
+    );
+
+    if (!item) {
+        alert("Item not found. Please refresh the page.");
+        return;
+    }
+
+    if (item.reportType !== "Found") {
+        alert("Only found items can be claimed.");
+        return;
+    }
+
+    if (["Claimed", "Handed Over"].includes(item.itemStatus)) {
+        alert("This item is no longer available.");
+        return;
+    }
+
+    const duplicate = claims.some(claim =>
+        String(claim.itemId) === itemId &&
+        String(claim.claimantEmail).toLowerCase() ===
+            studentEmail.toLowerCase() &&
+        ["Pending", "Approved", "Completed"].includes(claim.status)
+    );
+
+    if (duplicate) {
+        alert("You have already submitted a claim for this item.");
+        return;
+    }
+
+    const proof = prompt(
+        "Describe some details that prove this item belongs to you:"
+    );
+
+    if (proof === null || !proof.trim()) {
+        alert("Please enter proof before submitting.");
+        return;
+    }
+
+    const notes = prompt("Additional notes (optional):") || "";
+
+    const claim = {
+        claimId: "CLAIM-" + Date.now(),
+        itemId: item.itemId,
+        itemName: item.itemName,
+        claimantName: studentName,
+        claimantEmail: studentEmail,
+        claimDate: new Date().toISOString().slice(0, 10),
+        proof: proof.trim(),
+        notes: notes.trim(),
+        status: "Pending"
+    };
+
+    claims.push(claim);
+
+    localStorage.setItem(
+        "campusfind_claims",
+        JSON.stringify(claims)
+    );
+
+    alert("Claim submitted! You can track it in My Claims.");
+
+    renderStudentClaims();
+});
+
+
+// Display only the logged-in student's claims
+function renderStudentClaims() {
+    const studentEmail = (
+        sessionStorage.getItem("studentEmail") || ""
+    ).toLowerCase();
+
+    const claims = JSON.parse(
+        localStorage.getItem("campusfind_claims") || "[]"
+    );
+
+    const myClaims = claims.filter(claim =>
+        String(claim.claimantEmail || "").toLowerCase() === studentEmail
+    );
+
+    const body = document.getElementById("myClaimsBody");
+
+    if (!body) return;
+
+    body.innerHTML = "";
+
+    myClaims.forEach(claim => {
+        const row = document.createElement("tr");
+
+        // Use textContent to safely display user-entered information.
+        const values = [
+            claim.claimId || "",
+            claim.itemName || "",
+            claim.claimDate || "",
+            claim.status || "Pending"
+        ];
+
+        values.forEach(value => {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+        });
+
+        body.appendChild(row);
+    });
+
+    const summary = document.getElementById("myClaimsSummary");
+    if (summary) {
+        summary.textContent = myClaims.length + " claim(s)";
+    }
+
+    const empty = document.getElementById("myClaimsEmpty");
+    if (empty) {
+        empty.hidden = myClaims.length !== 0;
+    }
+}
+
+
+// Refresh the student's claim list when opening My Claims
+$(document).on("click", '[data-page="myclaims"]', function () {
+    renderStudentClaims();
+});
+
+</script>
+</body>
+</html>

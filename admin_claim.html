@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Claims | CampusFind</title>
+    <link rel="stylesheet" href="ad_claim.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">CF</div>
+            <div>
+                <h2>CampusFind</h2>
+                <small>Admin Panel</small>
+            </div>
+        </div>
+
+        <p class="menu-heading">MAIN MENU</p>
+        <a href="admindash.html" class="nav-link">▦ Dashboard</a>
+        <a href="ad_item.html" class="nav-link">▤ Manage Items</a>
+        <a href="admin_claim.html" class="nav-link active">✓ Manage Claims</a>
+        <a href="ad_handover.html" class="nav-link">⇄ Manage Handovers</a>
+
+        <div class="sidebar-bottom">
+            <p>CampusFind Admin Portal</p>
+            <small>Lost & Found Management</small>
+            <button id="logoutBtn" class="logout-btn">↪ Logout</button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h1>Manage Claims</h1>
+                <p>Review and manage claims submitted by students.</p>
+            </div>
+            <div class="profile">
+                <div class="avatar">A</div>
+                <div>
+                    <strong>Administrator</strong>
+                    <small>System Admin</small>
+                </div>
+            </div>
+        </header>
+
+        <section class="stats">
+            <div class="stat-card">
+                <span class="stat-icon blue">▤</span>
+                <div><p>Total Claims</p><h2 id="totalClaims">0</h2></div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon orange">◷</span>
+                <div><p>Pending</p><h2 id="pendingClaims">0</h2></div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon green">✓</span>
+                <div><p>Approved</p><h2 id="approvedClaims">0</h2></div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon red">×</span>
+                <div><p>Rejected</p><h2 id="rejectedClaims">0</h2></div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Student Claim Requests</h2>
+                    <p>Check claim details and decide whether to approve or reject.</p>
+                </div>
+            </div>
+
+            <div class="filters">
+                <input type="search" id="searchInput"
+                       placeholder="Search item, student or email...">
+
+                <select id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+
+            <div id="emptyMessage" class="empty-message" hidden>
+                No claims found. Claims submitted by students will appear here.
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Claim ID</th>
+                            <th>Item</th>
+                            <th>Student Details</th>
+                            <th>Claim Date</th>
+                            <th>Proof / Notes</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="claimsTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="table-footer" id="resultCount">Showing 0 claims</div>
+        </section>
+
+        <footer>© 2026 CampusFind | Admin Management System</footer>
+    </main>
+</div>
+
+<table id="claimsTable">
+    <thead>
+        <tr>
+            <th>Claim ID</th>
+            <th>Item Name</th>
+            <th>Student Name</th>
+            <th>Email</th>
+            <th>Claim Date</th>
+            <th>Status / Proof</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="claimsTableBody"></tbody>
+</table>
+
+<script src="ad_claim.js"></script>
+</body>
+</html>

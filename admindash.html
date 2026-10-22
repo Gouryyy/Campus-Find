@@ -1,0 +1,130 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFind | Admin Dashboard</title>
+
+    <link rel="stylesheet" href="adash.css">
+
+    <!-- jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">Campus<span>Find</span></div>
+        <p class="side-label">ADMIN PANEL</p>
+
+        <nav class="navigation">
+            <a href="admindash.html" class="nav-link active">▦ Dashboard</a>
+            <a href="ad_item.html" class="nav-link">□ Manage Items</a>
+            <a href="admin_claim.html" class="nav-link">✓ Manage Claims</a>
+            <a href="ad_handover.html" class="nav-link">⇄ Manage Handovers</a>
+        </nav>
+
+        <button id="logoutBtn" class="logout-btn">↪ Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">CAMPUSFIND / ADMIN</p>
+                <h1>Dashboard</h1>
+                <p class="subheading">Manage your campus lost and found system.</p>
+            </div>
+            <div class="admin-badge">
+                <span class="admin-avatar">A</span>
+                <span>Administrator</span>
+            </div>
+        </header>
+
+        <section class="welcome-panel">
+            <div>
+                <p class="eyebrow light">ADMIN OVERVIEW</p>
+                <h2>Welcome back, Admin!</h2>
+                <p>Here is the latest overview of reported items and claims.</p>
+            </div>
+            <a href="ad_item.html" class="primary-btn">+ Manage Items</a>
+        </section>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">□</div>
+                <p>Total Items</p>
+                <h2 id="totalItems">0</h2>
+                <span>All reported items</span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">◷</div>
+                <p>Pending Items</p>
+                <h2 id="pendingItems">0</h2>
+                <span>Awaiting review</span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">✓</div>
+                <p>Total Claims</p>
+                <h2 id="totalClaims">0</h2>
+                <span>Submitted claims</span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">⇄</div>
+                <p>Completed Handovers</p>
+                <h2 id="totalHandovers">0</h2>
+                <span>Items returned</span>
+            </div>
+        </section>
+
+        <section class="content-panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Reported Items</h2>
+                    <p>Search and filter items reported on campus.</p>
+                </div>
+                <a href="ad_item.html" class="text-link">View all items →</a>
+            </div>
+
+            <div class="filters">
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search by item, category or location..."
+                    aria-label="Search reported items"
+                >
+
+                <select id="typeFilter" aria-label="Filter by report type">
+                    <option value="">All Types</option>
+                    <option value="Lost">Lost</option>
+                    <option value="Found">Found</option>
+                </select>
+
+                <select id="statusFilter" aria-label="Filter by item status">
+                    <option value="">All Statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Claimed">Claimed</option>
+                    <option value="Handed Over">Handed Over</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+
+            <div id="itemsContainer" class="items-grid"></div>
+
+            <p id="emptyMessage" class="empty-message" hidden>
+                No matching items found.
+            </p>
+
+            <p id="loadingMessage" class="loading-message">
+                Loading dashboard data...
+            </p>
+        </section>
+
+        <footer>© 2026 CampusFind · Admin Dashboard</footer>
+    </main>
+
+    <script src="ad_dah.js"></script>
+</body>
+</html>

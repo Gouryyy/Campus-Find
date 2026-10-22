@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFind | Item Handovers</title>
+    <link rel="stylesheet" href="handover.css">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">CF</div>
+            <div>
+                <h2>CampusFind</h2>
+                <p>Admin Portal</p>
+            </div>
+        </div>
+
+        <nav class="navigation">
+            <a href="admindash.html">Dashboard</a>
+            <a href="ad_item.html">Manage Items</a>
+            <a href="admin_claim.html">Manage Claims</a>
+            <a href="ad_handover.html" class="active">Handovers</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <p>Smart Campus Lost &amp; Found</p>
+            <button id="logoutBtn" class="logout-btn" type="button">
+                Log Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">ADMINISTRATION</p>
+                <h1>Item Handovers</h1>
+                <p class="subtitle">
+                    Track and record the return of claimed items to students.
+                </p>
+            </div>
+            <div class="admin-badge">
+                <span class="admin-avatar">A</span>
+                <span>Administrator</span>
+            </div>
+        </header>
+
+        <section class="summary-grid">
+            <article class="summary-card">
+                <p>Approved Claims</p>
+                <h2 id="approvedCount">0</h2>
+                <span>Ready for handover</span>
+            </article>
+
+            <article class="summary-card completed-card">
+                <p>Completed Handovers</p>
+                <h2 id="completedCount">0</h2>
+                <span>Items returned</span>
+            </article>
+
+            <article class="summary-card pending-card">
+                <p>Pending Handovers</p>
+                <h2 id="pendingCount">0</h2>
+                <span>Awaiting return</span>
+            </article>
+        </section>
+
+        <section class="panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Handover Management</h2>
+                    <p>Only approved claims are shown here.</p>
+                </div>
+
+                <button type="button" id="refreshBtn" class="secondary-btn">
+                    Refresh
+                </button>
+            </div>
+
+            <div class="filter-row">
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search item, student, email or claim ID..."
+                    aria-label="Search handovers"
+                >
+
+                <select id="statusFilter" aria-label="Filter by handover status">
+                    <option value="all">All statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Claim ID</th>
+                            <th>Item</th>
+                            <th>Student</th>
+                            <th>Email</th>
+                            <th>Handover Status</th>
+                            <th>Completed On</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="handoverTableBody">
+                        <tr>
+                            <td colspan="7" class="empty-message">
+                                Loading handovers...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p id="message" class="message" role="status"></p>
+        </section>
+
+        <footer>
+            CampusFind — Smart Campus Lost &amp; Found Management System
+        </footer>
+    </main>
+
+    <script src="ad_handover.js"></script>
+</body>
+</html>

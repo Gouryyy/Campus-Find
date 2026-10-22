@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Items | CampusFind</title>
+    <link rel="stylesheet" href="ad_item.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<div class="layout">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">CF</div>
+            <div>
+                <h2>CampusFind</h2>
+                <small>Admin Panel</small>
+            </div>
+        </div>
+
+        <p class="menu-heading">MAIN MENU</p>
+
+        <a href="admindash.html" class="nav-link">
+            <span>▦</span> Dashboard
+        </a>
+        <a href="ad_item.html" class="nav-link active">
+            <span>▤</span> Manage Items
+        </a>
+        <a href="admin_claim.html" class="nav-link">
+            <span>✓</span> Manage Claims
+        </a>
+        <a href="ad_handover.html" class="nav-link">
+            <span>⇄</span> Manage Handovers
+        </a>
+
+        <div class="sidebar-bottom">
+            <p>Lost something? Find it.</p>
+            <small>CampusFind Admin Portal</small>
+            <button id="logoutBtn" class="logout-btn">↪ Logout</button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <h1>Manage Items</h1>
+                <p>Manage all lost and found reports in your campus.</p>
+            </div>
+            <div class="admin-profile">
+                <div class="avatar">A</div>
+                <div>
+                    <strong>Administrator</strong>
+                    <small>System Admin</small>
+                </div>
+            </div>
+        </header>
+
+        <section class="stats">
+            <div class="stat-card">
+                <div class="stat-icon blue">▤</div>
+                <div>
+                    <p>Total Items</p>
+                    <h2 id="totalItems">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange">◷</div>
+                <div>
+                    <p>Pending Items</p>
+                    <h2 id="pendingItems">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">✓</div>
+                <div>
+                    <p>Found Items</p>
+                    <h2 id="foundItems">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">⌕</div>
+                <div>
+                    <p>Lost Items</p>
+                    <h2 id="lostItems">0</h2>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Item Management</h2>
+                    <p>Add a new report or manage existing reports.</p>
+                </div>
+                <button id="showFormBtn" class="primary-btn">+ Add New Item</button>
+            </div>
+
+            <form id="itemForm" class="item-form" hidden>
+                <h3 id="formTitle">Add New Item</h3>
+
+                <input type="hidden" id="itemId">
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="itemName">Item Name *</label>
+                        <input id="itemName" type="text"
+                               placeholder="e.g. Black wallet" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <select id="category" required>
+                            <option value="">Select category</option>
+                            <option>Electronics</option>
+                            <option>Books & Notes</option>
+                            <option>ID Card</option>
+                            <option>Wallet & Keys</option>
+                            <option>Bags</option>
+                            <option>Clothing</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reportType">Report Type *</label>
+                        <select id="reportType" required>
+                            <option value="">Select type</option>
+                            <option value="Lost">Lost</option>
+                            <option value="Found">Found</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reporter">Reported By *</label>
+                        <input id="reporter" type="text"
+                               placeholder="Student name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location *</label>
+                        <input id="location" type="text"
+                               placeholder="Where was it lost/found?" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reportDate">Report Date *</label>
+                        <input id="reportDate" type="date" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="description">Description</label>
+                        <textarea id="description" rows="3"
+                                  placeholder="Describe the item..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="itemStatus">Status</label>
+                        <select id="itemStatus">
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Claimed">Claimed</option>
+                            <option value="Handed Over">Handed Over</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="cancelBtn" class="secondary-btn">
+                        Cancel
+                    </button>
+                    <button type="submit" class="primary-btn" id="saveBtn">
+                        Save Item
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel">
+            <div class="section-heading">
+                <div>
+                    <h2>Reported Items</h2>
+                    <p>Search, filter and update item reports.</p>
+                </div>
+            </div>
+
+            <div class="filters">
+                <input id="searchInput" type="search"
+                       placeholder="Search by item, reporter or location...">
+
+                <select id="typeFilter">
+                    <option value="">All Types</option>
+                    <option value="Lost">Lost</option>
+                    <option value="Found">Found</option>
+                </select>
+
+                <select id="statusFilter">
+                    <option value="">All Statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Claimed">Claimed</option>
+                    <option value="Handed Over">Handed Over</option>
+                </select>
+            </div>
+
+            <div id="emptyMessage" class="empty-message" hidden>
+                No items found. Add a new item or change your filters.
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item Details</th>
+                            <th>Type</th>
+                            <th>Reporter</th>
+                            <th>Location</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemsTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="table-footer">
+                <span id="resultCount">Showing 0 items</span>
+            </div>
+        </section>
+
+        <footer>© 2026 CampusFind | Admin Management System</footer>
+    </main>
+</div>
+
+<script src="ad_item.js"></script>
+</body>
+</html>
