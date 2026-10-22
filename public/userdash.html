@@ -1492,9 +1492,10 @@
     }
 
     // --------------------------------------------------
+  
     // 6. SUBMIT A CLAIM
     // --------------------------------------------------
-    function submitClaim(itemId) {
+    async function submitClaim(itemId) {
         const items = readArray(ITEMS_KEY);
         const item = items.find(entry =>
             String(entry.itemId || entry.id || "") === String(itemId)
@@ -1510,25 +1511,6 @@
             return;
         }
 
-        const status = normalise(getItemStatus(item));
-        if (["claimed", "handed over", "completed", "rejected"].includes(status)) {
-            alert("This item is no longer available to claim.");
-            renderBrowseItems();
-            return;
-        }
-
-        const claims = readArray(CLAIMS_KEY);
-        const alreadyClaimed = claims.some(claim =>
-            String(claim.itemId) === String(itemId) &&
-            normalise(claim.claimantEmail) === studentEmail &&
-            !["rejected"].includes(normalise(claim.status))
-        );
-
-        if (alreadyClaimed) {
-            alert("You have already submitted a claim for this item.");
-            return;
-        }
-
         const proof = prompt(
             "Describe how you can identify or prove ownership of this item:"
         );
@@ -1541,80 +1523,132 @@
         }
 
         const notes = prompt("Additional notes (optional):") || "";
+        const message = notes.trim()
+            ? `Proof: ${proof.trim()}\nAdditional notes: ${notes.trim()}`
+            : `Proof: ${proof.trim()}`;
 
-        const claim = {
-            claimId: makeId("CLM"),
-            itemId: item.itemId || item.id,
-            itemName: item.itemName || item.name || "Unnamed item",
-            claimantName: studentName,
-            claimantEmail: studentEmail,
-            claimDate: todayISO(),
-            proof: proof.trim(),
-            notes: notes.trim(),
-            status: "Pending"
-        };
+        try {
+            const response = await fetch("/api/claims", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    itemId: item.itemId || item.id,
+                    message: message
+                })
+            });
 
-        claims.push(claim);
+            const data = await response.json();
 
-        if (saveArray(CLAIMS_KEY, claims)) {
+            if (!response.ok) {
+                alert(data.message || "Could not submit your claim.");
+                return;
+            }
+
             alert("Claim submitted successfully! You can track it in My Claims.");
+
             renderOverview();
             renderBrowseItems();
+
+            // Refresh claims from MongoDB
+            const claimsResponse = await fetch("/api/claims", {
+                credentials: "same-origin"
+            });
+
+            if (claimsResponse.ok) {
+                const savedClaims = await claimsResponse.json();
+                console.log("Claims loaded from MongoDB:", savedClaims);
+            }
+        } catch (error) {
+            console.error("Submit claim error:", error);
+            alert("Could not connect to the server. Please try again.");
         }
     }
+
 
     // --------------------------------------------------
     // 7. SUBMIT A LOST / FOUND REPORT
     // --------------------------------------------------
-    $("reportForm").addEventListener("submit", function (event) {
-        event.preventDefault();
+   
+$("reportForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-        const reportDate = $("reportDate").value;
+    const reportDate = $("reportDate").value;
 
-        if (reportDate && reportDate > todayISO()) {
-            showReportMessage("The report date cannot be in the future.", "error");
-            return;
+    if (reportDate && reportDate > todayISO()) {
+        showReportMessage("The report date cannot be in the future.", "error");
+        return;
+    }
+
+    const newItem = {
+        title: $("itemName").value.trim(),
+        type: $("reportType").value,
+        category: $("itemCategory").value,
+        location: $("itemLocation").value.trim(),
+        date: reportDate,
+        description: $("itemDescription").value.trim()
+    };
+
+    if (!newItem.title || !newItem.type || !newItem.category ||
+        !newItem.location || !newItem.date || !newItem.description) {
+        showReportMessage("Please fill in all required fields.", "error");
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/items", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "same-origin",
+            body: JSON.stringify(newItem)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Could not submit the report.");
         }
 
-        const items = readArray(ITEMS_KEY);
+        showReportMessage("Your report was saved successfully!", "success");
 
-        const newItem = {
-            itemId: makeId("ITM"),
-            itemName: $("itemName").value.trim(),
-            category: $("itemCategory").value,
-            reportType: $("reportType").value,
-            reporter: studentName,
-            reporterEmail: studentEmail,
-            location: $("itemLocation").value.trim(),
-            reportDate: reportDate,
-            description: $("itemDescription").value.trim(),
-            itemStatus: "Pending",
-            createdAt: new Date().toISOString()
-        };
+        $("reportForm").reset();
+        $("reporterName").value = studentName;
+        $("reportDate").value = todayISO();
 
-        if (!newItem.itemName || !newItem.reportType ||
-            !newItem.category || !newItem.location ||
-            !newItem.reportDate || !newItem.description) {
-            showReportMessage("Please fill in all required fields.", "error");
-            return;
+        // Refresh items from the database.
+        const itemsResponse = await fetch("/api/items", {
+            credentials: "same-origin"
+        });
+
+        if (itemsResponse.ok) {
+            const dbItems = await itemsResponse.json();
+
+            const mappedItems = dbItems.map(item => ({
+                itemId: item._id,
+                itemName: item.title,
+                category: item.category,
+                reportType: item.type,
+                reporter: item.userId?.name || "",
+                reporterEmail: item.userId?.email || "",
+                location: item.location,
+                reportDate: item.date,
+                description: item.description,
+                itemStatus: item.status,
+                createdAt: item.createdAt
+            }));
+
+            saveArray(ITEMS_KEY, mappedItems);
+            refreshDashboard();
         }
+    } catch (error) {
+        showReportMessage(error.message || "Server connection failed.", "error");
+    }
+});
 
-        items.push(newItem);
-
-        if (saveArray(ITEMS_KEY, items)) {
-            $("reportForm").reset();
-            $("reporterName").value = studentName;
-            $("reportDate").value = todayISO();
-
-            showReportMessage(
-                "Your " + newItem.reportType.toLowerCase() +
-                " item report was submitted successfully!",
-                "success"
-            );
-
-            renderOverview();
-        }
-    });
 
     function showReportMessage(message, type) {
         const box = $("reportMessage");
@@ -1660,29 +1694,66 @@
     // --------------------------------------------------
     // 9. MY CLAIMS
     // --------------------------------------------------
-    function renderMyClaims() {
-        const claims = getMyClaims();
+    
+async function renderMyClaims() {
+    const summary = $("myClaimsSummary");
+    const body = $("myClaimsBody");
+    const empty = $("myClaimsEmpty");
 
-        $("myClaimsSummary").textContent =
+    summary.textContent = "Loading claims...";
+    body.innerHTML = "";
+    empty.hidden = true;
+
+    try {
+        const response = await fetch("/api/claims", {
+            method: "GET",
+            credentials: "same-origin"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Could not load claims.");
+        }
+
+        if (!Array.isArray(data)) {
+            throw new Error("Unexpected response from the server.");
+        }
+
+        const claims = data.map(claim => ({
+            itemName: claim.itemId?.title || "Item",
+            claimId: claim._id
+                ? "CLM-" + claim._id.slice(-6).toUpperCase()
+                : "—",
+            claimDate: claim.createdAt,
+            proof: claim.message || "",
+            notes: "",
+            status: claim.status || "Pending"
+        }));
+
+        summary.textContent =
             claims.length + (claims.length === 1 ? " claim" : " claims");
 
-        $("myClaimsBody").innerHTML = claims.map(claim => `
+        body.innerHTML = claims.map(claim => `
             <tr>
-                <td><span class="item-name">${escapeHTML(claim.itemName || "Item")}</span></td>
-                <td>${escapeHTML(claim.claimId || "—")}</td>
+                <td><span class="item-name">${escapeHTML(claim.itemName)}</span></td>
+                <td>${escapeHTML(claim.claimId)}</td>
                 <td>${escapeHTML(formatDate(claim.claimDate))}</td>
-                <td>
-                    ${escapeHTML(claim.proof || "—")}
-                    ${claim.notes
-                        ? `<br><span class="muted">Notes: ${escapeHTML(claim.notes)}</span>`
-                        : ""}
-                </td>
-                <td>${setStatusBadge(claim.status || "Pending")}</td>
+                <td>${escapeHTML(claim.proof || "—")}</td>
+                <td>${setStatusBadge(claim.status)}</td>
             </tr>
         `).join("");
 
-        $("myClaimsEmpty").hidden = claims.length > 0;
+        empty.hidden = claims.length > 0;
+    } catch (error) {
+        console.error("Load my claims error:", error);
+        summary.textContent = "Could not load claims";
+        body.innerHTML = "";
+        empty.hidden = true;
+        alert(error.message || "Could not load your claims. Please try again.");
     }
+}
+
 
     // --------------------------------------------------
     // 10. PROFILE DETAILS
@@ -1712,150 +1783,7 @@
 
     refreshDashboard();
     
-// Submit a claim from the student dashboard
-$(document).on("click", ".claim-button", function () {
-    const itemId = String($(this).attr("data-item-id"));
 
-    const studentName = sessionStorage.getItem("studentName");
-    const studentEmail = sessionStorage.getItem("studentEmail");
-
-    if (!studentName || !studentEmail) {
-        alert("Please log in again.");
-        window.location.href = "login.html";
-        return;
-    }
-
-    let items = JSON.parse(
-        localStorage.getItem("campusfind_items") || "[]"
-    );
-
-    let claims = JSON.parse(
-        localStorage.getItem("campusfind_claims") || "[]"
-    );
-
-    const item = items.find(
-        item => String(item.itemId) === itemId
-    );
-
-    if (!item) {
-        alert("Item not found. Please refresh the page.");
-        return;
-    }
-
-    if (item.reportType !== "Found") {
-        alert("Only found items can be claimed.");
-        return;
-    }
-
-    if (["Claimed", "Handed Over"].includes(item.itemStatus)) {
-        alert("This item is no longer available.");
-        return;
-    }
-
-    const duplicate = claims.some(claim =>
-        String(claim.itemId) === itemId &&
-        String(claim.claimantEmail).toLowerCase() ===
-            studentEmail.toLowerCase() &&
-        ["Pending", "Approved", "Completed"].includes(claim.status)
-    );
-
-    if (duplicate) {
-        alert("You have already submitted a claim for this item.");
-        return;
-    }
-
-    const proof = prompt(
-        "Describe some details that prove this item belongs to you:"
-    );
-
-    if (proof === null || !proof.trim()) {
-        alert("Please enter proof before submitting.");
-        return;
-    }
-
-    const notes = prompt("Additional notes (optional):") || "";
-
-    const claim = {
-        claimId: "CLAIM-" + Date.now(),
-        itemId: item.itemId,
-        itemName: item.itemName,
-        claimantName: studentName,
-        claimantEmail: studentEmail,
-        claimDate: new Date().toISOString().slice(0, 10),
-        proof: proof.trim(),
-        notes: notes.trim(),
-        status: "Pending"
-    };
-
-    claims.push(claim);
-
-    localStorage.setItem(
-        "campusfind_claims",
-        JSON.stringify(claims)
-    );
-
-    alert("Claim submitted! You can track it in My Claims.");
-
-    renderStudentClaims();
-});
-
-
-// Display only the logged-in student's claims
-function renderStudentClaims() {
-    const studentEmail = (
-        sessionStorage.getItem("studentEmail") || ""
-    ).toLowerCase();
-
-    const claims = JSON.parse(
-        localStorage.getItem("campusfind_claims") || "[]"
-    );
-
-    const myClaims = claims.filter(claim =>
-        String(claim.claimantEmail || "").toLowerCase() === studentEmail
-    );
-
-    const body = document.getElementById("myClaimsBody");
-
-    if (!body) return;
-
-    body.innerHTML = "";
-
-    myClaims.forEach(claim => {
-        const row = document.createElement("tr");
-
-        // Use textContent to safely display user-entered information.
-        const values = [
-            claim.claimId || "",
-            claim.itemName || "",
-            claim.claimDate || "",
-            claim.status || "Pending"
-        ];
-
-        values.forEach(value => {
-            const cell = document.createElement("td");
-            cell.textContent = value;
-            row.appendChild(cell);
-        });
-
-        body.appendChild(row);
-    });
-
-    const summary = document.getElementById("myClaimsSummary");
-    if (summary) {
-        summary.textContent = myClaims.length + " claim(s)";
-    }
-
-    const empty = document.getElementById("myClaimsEmpty");
-    if (empty) {
-        empty.hidden = myClaims.length !== 0;
-    }
-}
-
-
-// Refresh the student's claim list when opening My Claims
-$(document).on("click", '[data-page="myclaims"]', function () {
-    renderStudentClaims();
-});
 
 </script>
 </body>

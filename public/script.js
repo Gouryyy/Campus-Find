@@ -821,61 +821,123 @@ imageInput.addEventListener("change", function () {
   reader.readAsDataURL(file);
 });
 
+
+
+
 // ---------- 13. SUBMIT REPORT ----------
 
-reportForm.addEventListener("submit", function (event) {
-  event.preventDefault();
+reportForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-  if (!validateReportForm()) {
-    showToast("Please correct the highlighted fields.");
-    return;
-  }
+    if (!validateReportForm()) {
+        showToast("Please correct the highlighted fields.");
+        return;
+    }
 
-  const type = document.querySelector(
-    'input[name="reportType"]:checked'
-  ).value;
+    const type = document.querySelector(
+        'input[name="reportType"]:checked'
+    ).value;
 
-  const newItem = {
-    id: Date.now(),
-    name: document.getElementById("itemName").value.trim(),
-    type: type,
-    category: document.getElementById("itemCategory").value,
-    location: document.getElementById("itemLocation").value,
-    date: document.getElementById("itemDate").value,
-    description: document.getElementById("itemDescription").value.trim(),
-    emoji: itemEmojis[document.getElementById("itemCategory").value] || "📦",
-    status: type,
-    image: selectedImage
-  };
+    const newItem = {
+        title: document.getElementById("itemName").value.trim(),
+        type: type === "lost" ? "Lost" : "Found",
+        category: document.getElementById("itemCategory").value,
+        location: document.getElementById("itemLocation").value,
+        date: document.getElementById("itemDate").value,
+        description: document.getElementById("itemDescription").value.trim(),
+        imageUrl: ""
+    };
 
-  items.unshift(newItem);
-  saveItems();
-
-  renderDashboard();
-  renderBrowseItems();
-
-  reportForm.reset();
-
-  selectedImage = "";
-  document.getElementById("imagePreview").innerHTML = "";
-  document.getElementById("imagePreview").classList.add("hidden");
-
-  document.getElementById("itemDate").value =
-    new Date().toLocaleDateString("en-CA");
-
-  document.querySelector('input[name="reportType"][value="lost"]').checked = true;
-
-  document.querySelectorAll(".type-option").forEach(function (option) {
-    option.classList.toggle(
-      "selected",
-      option.querySelector("input").checked
+    const submitButton = reportForm.querySelector(
+        'button[type="submit"]'
     );
-  });
 
-  clearFormErrors();
+    if (submitButton) submitButton.disabled = true;
 
-  showView("browse");
-  showToast("Your report has been added successfully!");
+    try {
+        const response = await fetch("/api/items", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(newItem)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                showToast("Please log in before reporting an item.");
+            } else {
+                showToast(data.message || "Could not submit your report.");
+            }
+            return;
+        }
+
+        // Reload actual items from MongoDB.
+        const itemsResponse = await fetch("/api/items", {
+            credentials: "same-origin"
+        });
+
+        if (!itemsResponse.ok) {
+            throw new Error("Report saved, but items could not be refreshed.");
+        }
+
+        const savedItems = await itemsResponse.json();
+
+        items = savedItems.map(function (item) {
+            const itemType = String(item.type).toLowerCase();
+
+            return {
+                id: item._id,
+                name: item.title,
+                type: itemType,
+                category: item.category,
+                location: item.location,
+                date: String(item.date).slice(0, 10),
+                description: item.description,
+                emoji: itemEmojis[item.category] || "📦",
+                status: item.status === "Recovered"
+                    ? "recovered"
+                    : itemType,
+                image: item.imageUrl || ""
+            };
+        });
+
+        renderDashboard();
+        renderRecentItems();
+        renderBrowseItems();
+
+        reportForm.reset();
+
+        selectedImage = "";
+        document.getElementById("imagePreview").innerHTML = "";
+        document.getElementById("imagePreview").classList.add("hidden");
+
+        document.getElementById("itemDate").value =
+            new Date().toLocaleDateString("en-CA");
+
+        document.querySelector(
+            'input[name="reportType"][value="lost"]'
+        ).checked = true;
+
+        document.querySelectorAll(".type-option").forEach(function (option) {
+            option.classList.toggle(
+                "selected",
+                option.querySelector("input").checked
+            );
+        });
+
+        clearFormErrors();
+        showView("browse");
+        showToast("Your report was saved to MongoDB!");
+    } catch (error) {
+        console.error("Report submission error:", error);
+        showToast(error.message || "Could not connect to the server.");
+    } finally {
+        if (submitButton) submitButton.disabled = false;
+    }
 });
 
 // Reset form
