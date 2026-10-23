@@ -19,43 +19,42 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function getClaimId(claim) {
-        return claim._id || "";
+        return claim?._id || "";
     }
 
     function getItemName(claim) {
-        return claim.itemId?.title || "Unknown item";
+        return claim?.itemId?.title || "Unknown item";
     }
 
     function getStudentName(claim) {
-        return claim.claimantId?.name || "Unknown student";
+        return claim?.claimantId?.name || "Unknown student";
     }
 
     function getStudentEmail(claim) {
-        return claim.claimantId?.email || "";
+        return claim?.claimantId?.email || "";
     }
 
-    function formatDate(date) {
-        if (!date) return "—";
+    function formatDate(value) {
+        if (!value) return "—";
 
-        const parsed = new Date(date);
+        const date = new Date(value);
 
-        if (Number.isNaN(parsed.getTime())) return "—";
+        if (Number.isNaN(date.getTime())) return "—";
 
-        return parsed.toLocaleDateString();
+        return date.toLocaleDateString("en-IN");
     }
 
     function updateCounts() {
-        document.getElementById("totalClaims").textContent =
-            claims.length;
+        document.getElementById("totalClaims").textContent = claims.length;
 
         document.getElementById("pendingClaims").textContent =
-            claims.filter(c => c.status === "Pending").length;
+            claims.filter(claim => claim.status === "Pending").length;
 
         document.getElementById("approvedClaims").textContent =
-            claims.filter(c => c.status === "Approved").length;
+            claims.filter(claim => claim.status === "Approved").length;
 
         document.getElementById("rejectedClaims").textContent =
-            claims.filter(c => c.status === "Rejected").length;
+            claims.filter(claim => claim.status === "Rejected").length;
     }
 
     async function loadClaims() {
@@ -70,15 +69,14 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch("/api/claims", {
                 method: "GET",
-                credentials: "same-origin"
+                credentials: "same-origin",
+                cache: "no-store"
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(
-                    data.message || "Could not load claims."
-                );
+                throw new Error(data.message || "Could not load claims.");
             }
 
             if (!Array.isArray(data)) {
@@ -88,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
             claims = data;
             updateCounts();
             renderClaims();
+
         } catch (error) {
             console.error("Load claims error:", error);
 
@@ -97,6 +96,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 error.message || "Could not load claims.";
 
             resultCount.textContent = "Unable to load claims";
+
+            document.getElementById("totalClaims").textContent = "—";
+            document.getElementById("pendingClaims").textContent = "—";
+            document.getElementById("approvedClaims").textContent = "—";
+            document.getElementById("rejectedClaims").textContent = "—";
         }
     }
 
@@ -126,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
             `Showing ${filteredClaims.length} of ${claims.length} claims`;
 
         emptyMessage.hidden = filteredClaims.length > 0;
+
         emptyMessage.textContent = claims.length === 0
             ? "No claims have been submitted yet."
             : "No claims match your search or filter.";
@@ -148,6 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         data-id="${escapeHTML(id)}">
                         Approve
                     </button>
+
                     <button type="button"
                         data-action="Rejected"
                         data-id="${escapeHTML(id)}">
@@ -159,25 +165,33 @@ document.addEventListener("DOMContentLoaded", () => {
             return `
                 <tr>
                     <td>${escapeHTML(id.slice(-8).toUpperCase())}</td>
+
                     <td>
                         <span class="item-name">
                             ${escapeHTML(getItemName(claim))}
                         </span>
                     </td>
+
                     <td>
                         ${escapeHTML(getStudentName(claim))}
                         <br>
                         <small>${escapeHTML(getStudentEmail(claim))}</small>
                     </td>
+
                     <td>${escapeHTML(formatDate(claim.createdAt))}</td>
+
                     <td>
                         ${escapeHTML(claim.message || "No proof provided.")}
                     </td>
+
                     <td>
-                        <span class="status-badge status-${escapeHTML(status.toLowerCase())}">
+                        <span class="status-badge status-${escapeHTML(
+                            status.toLowerCase()
+                        )}">
                             ${escapeHTML(status)}
                         </span>
                     </td>
+
                     <td>${actions}</td>
                 </tr>
             `;
@@ -213,8 +227,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             alert(`Claim ${status.toLowerCase()} successfully.`);
-
             await loadClaims();
+
         } catch (error) {
             console.error("Update claim error:", error);
             alert(error.message || "Could not update claim status.");
@@ -250,6 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     alert("Logout failed. Please try again.");
                 }
+
             } catch (error) {
                 console.error("Logout error:", error);
                 alert("Could not connect to the server.");

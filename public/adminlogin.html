@@ -1,10 +1,10 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusFind | Admin Portal</title>
+    <title>CampusFind | Admin Login</title>
 
     <style>
         * {
@@ -15,154 +15,92 @@
 
         body {
             font-family: "Segoe UI", Arial, sans-serif;
-            background: #f3f6fc;
             min-height: 100vh;
+            background: linear-gradient(135deg, #10264d, #2362a8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
             color: #19365f;
         }
 
-        nav {
-            height: 76px;
-            background: #fff;
-            padding: 0 7%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #e8edf5;
+        .login-container {
+            width: 100%;
+            max-width: 460px;
+            padding: 42px;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 20px 55px rgba(0, 0, 0, 0.18);
         }
 
-        .logo {
-            font-size: 25px;
-            font-weight: 800;
-            letter-spacing: -0.7px;
+        .brand {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .brand h1 {
+            font-size: 34px;
             color: #173b70;
+            margin-bottom: 8px;
         }
 
-        .logo span {
+        .brand h1 span {
             color: #3478f6;
         }
 
-        .back-link {
-            text-decoration: none;
-            color: #64748b;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .back-link:hover {
-            color: #245bc4;
-        }
-
-        main {
-            min-height: calc(100vh - 126px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 45px 20px;
-        }
-
-        .login-wrapper {
-            width: 100%;
-            max-width: 1000px;
-            min-height: 570px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 55px rgba(23, 59, 112, 0.10);
-            border: 1px solid #e7ecf4;
-        }
-
-        .brand-panel {
-            padding: 55px;
-            background: linear-gradient(145deg, #173b70, #245bc4);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .brand-panel h1 {
-            font-size: 36px;
-            line-height: 1.2;
-            margin-bottom: 20px;
-        }
-
-        .brand-panel h1 span {
-            color: #9ec5ff;
-        }
-
-        .brand-panel p {
+        .brand p {
             font-size: 14px;
-            line-height: 1.8;
-            color: #e0eaff;
-        }
-
-        .brand-features {
-            margin-top: 30px;
-            line-height: 2.5;
-            font-size: 13px;
-            list-style: none;
-        }
-
-        .brand-features li::before {
-            content: "✓ ";
-            color: #9ec5ff;
-            font-weight: bold;
-        }
-
-        .form-panel {
-            padding: 55px 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            color: #7b8799;
+            line-height: 1.6;
         }
 
         .admin-badge {
-            display: inline-flex;
+            display: flex;
+            justify-content: center;
             align-items: center;
             gap: 8px;
+            width: fit-content;
+            margin: 0 auto 22px;
+            padding: 9px 14px;
+            border-radius: 30px;
             background: #edf3ff;
             color: #245bc4;
-            padding: 8px 12px;
-            border-radius: 30px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 24px;
-            width: fit-content;
         }
 
         .status-dot {
             width: 7px;
             height: 7px;
-            background: #3478f6;
             border-radius: 50%;
+            background: #3478f6;
         }
 
-        .form-panel h2 {
+        h2 {
+            text-align: center;
+            font-size: 27px;
             color: #173b70;
-            font-size: 29px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
-        .form-description {
+        .description {
+            text-align: center;
             color: #7b8799;
-            font-size: 13px;
-            line-height: 1.7;
+            font-size: 14px;
+            line-height: 1.6;
             margin-bottom: 30px;
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
 
         .input-group label {
             display: block;
-            color: #344563;
-            font-size: 12px;
-            font-weight: 700;
             margin-bottom: 9px;
+            color: #344563;
+            font-size: 14px;
+            font-weight: 700;
         }
 
         .input-wrap {
@@ -178,13 +116,13 @@
             outline: none;
             color: #243b5a;
             font-family: inherit;
-            font-size: 13px;
+            font-size: 14px;
         }
 
         .input-wrap input:focus {
             border-color: #3478f6;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(52, 120, 246, 0.10);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(52, 120, 246, 0.1);
         }
 
         .password-input {
@@ -200,7 +138,7 @@
             background: transparent;
             color: #3478f6;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
         }
 
@@ -208,7 +146,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin: 2px 0 25px;
+            gap: 10px;
+            margin: 4px 0 25px;
         }
 
         .remember {
@@ -216,7 +155,7 @@
             align-items: center;
             gap: 7px;
             color: #718096;
-            font-size: 11px;
+            font-size: 12px;
             cursor: pointer;
         }
 
@@ -229,7 +168,7 @@
             background: transparent;
             color: #3478f6;
             font-family: inherit;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             cursor: pointer;
         }
@@ -240,8 +179,8 @@
             border-radius: 9px;
             padding: 15px;
             background: #245bc4;
-            color: white;
-            font-size: 13px;
+            color: #ffffff;
+            font-size: 15px;
             font-weight: 700;
             cursor: pointer;
             font-family: inherit;
@@ -257,11 +196,11 @@
         }
 
         .message {
-            font-size: 12px;
+            font-size: 13px;
             text-align: center;
             line-height: 1.6;
-            margin-top: 13px;
-            min-height: 19px;
+            margin-top: 14px;
+            min-height: 20px;
             overflow-wrap: anywhere;
         }
 
@@ -271,164 +210,122 @@
             padding-top: 20px;
             border-top: 1px solid #edf0f5;
             color: #98a2b3;
-            font-size: 11px;
+            font-size: 12px;
         }
 
-        footer {
+        .back-link {
+            display: block;
             text-align: center;
-            color: #98a2b3;
-            font-size: 11px;
-            padding: 20px;
+            margin-top: 20px;
+            color: #245bc4;
+            font-size: 13px;
+            text-decoration: none;
         }
 
-        @media (max-width: 800px) {
-            .login-wrapper {
-                max-width: 480px;
-                grid-template-columns: 1fr;
-            }
-
-            .brand-panel {
-                padding: 35px;
-            }
-
-            .brand-panel h1 {
-                font-size: 29px;
-            }
-
-            .form-panel {
-                padding: 38px 30px;
-            }
+        .back-link:hover {
+            text-decoration: underline;
         }
 
         @media (max-width: 480px) {
-            nav {
-                height: 68px;
-                padding: 0 5%;
+            .login-container {
+                padding: 30px 23px;
             }
 
-            .logo {
-                font-size: 22px;
+            .brand h1 {
+                font-size: 30px;
             }
 
-            .back-link {
-                font-size: 12px;
-            }
-
-            .brand-panel {
-                padding: 28px 23px;
-            }
-
-            .form-panel {
-                padding: 35px 23px;
-            }
-
-            .form-options {
-                gap: 12px;
-                flex-wrap: wrap;
+            h2 {
+                font-size: 24px;
             }
         }
     </style>
 </head>
 
 <body>
-    <nav>
-        <div class="logo">Campus<span>Find</span></div>
-        <a href="./index.html" class="back-link">← Back to Home</a>
-    </nav>
+    <main class="login-container">
 
-    <main>
-        <div class="login-wrapper">
-            <section class="brand-panel">
-                <h1>Welcome to <span>CampusFind</span></h1>
-                <p>
-                    Manage campus lost-and-found reports from one place.
-                    Review reported items and help students recover their belongings.
-                </p>
-
-                <ul class="brand-features">
-                    <li>Manage reported items</li>
-                    <li>Review claims</li>
-                    <li>Keep campus records organized</li>
-                </ul>
-            </section>
-
-            <section class="form-panel">
-                <div class="admin-badge">
-                    <span class="status-dot"></span>
-                    ADMIN ACCESS
-                </div>
-
-                <h2>Welcome back</h2>
-
-                <p class="form-description">
-                    Sign in using your administrator email and password.
-                </p>
-
-                <form id="adminLoginForm">
-                    <div class="input-group">
-                        <label for="email">Admin Email</label>
-                        <div class="input-wrap">
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                placeholder="Enter your admin email"
-                                autocomplete="username"
-                                required
-                            >
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="password">Password</label>
-                        <div class="input-wrap">
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                class="password-input"
-                                placeholder="Enter your password"
-                                autocomplete="current-password"
-                                required
-                            >
-                            <button
-                                type="button"
-                                id="togglePassword"
-                                class="show-password"
-                            >Show</button>
-                        </div>
-                    </div>
-
-                    <div class="form-options">
-                        <label class="remember">
-                            <input type="checkbox" id="rememberMe">
-                            Remember email
-                        </label>
-
-                        <button type="button" id="forgotPassword"
-                                class="forgot-link">
-                            Forgot password?
-                        </button>
-                    </div>
-
-                    <button type="submit" id="loginBtn" class="login-btn">
-                        Sign In to Dashboard →
-                    </button>
-
-                    <p id="message" class="message"
-                       role="status" aria-live="polite"></p>
-                </form>
-
-                <div class="form-security">
-                    🔒 Authorized administrators only
-                </div>
-            </section>
+        <div class="brand">
+            <h1>Campus<span>Find</span></h1>
+            <p>Administrator Portal</p>
+            <p>Sign in to manage campus lost-and-found records.</p>
         </div>
-    </main>
 
-    <footer>
-        © 2026 CampusFind. All rights reserved.
-    </footer>
+        <div class="admin-badge">
+            <span class="status-dot"></span>
+            ADMIN ACCESS
+        </div>
+
+        <h2>Welcome back</h2>
+
+        <p class="description">
+            Sign in using your administrator email and password.
+        </p>
+
+        <form id="adminLoginForm">
+            <div class="input-group">
+                <label for="email">Admin Email</label>
+                <div class="input-wrap">
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your admin email"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="password-input"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        class="show-password"
+                    >Show</button>
+                </div>
+            </div>
+
+            <div class="form-options">
+                <label class="remember">
+                    <input type="checkbox" id="rememberMe">
+                    Remember email
+                </label>
+
+                <button
+                    type="button"
+                    id="forgotPassword"
+                    class="forgot-link"
+                >
+                    Forgot password?
+                </button>
+            </div>
+
+            <button type="submit" id="loginBtn" class="login-btn">
+                Sign In to Dashboard →
+            </button>
+
+            <p id="message" class="message" role="status"
+               aria-live="polite"></p>
+        </form>
+
+        <div class="form-security">
+            🔒 Authorized administrators only
+        </div>
+
+        <a href="index.html" class="back-link">← Back to Home</a>
+    </main>
 
     <script>
         const loginForm = document.getElementById("adminLoginForm");
@@ -442,9 +339,9 @@
 
         // Show or hide password
         togglePassword.addEventListener("click", () => {
-            const isPassword = passwordInput.type === "password";
-            passwordInput.type = isPassword ? "text" : "password";
-            togglePassword.textContent = isPassword ? "Hide" : "Show";
+            const show = passwordInput.type === "password";
+            passwordInput.type = show ? "text" : "password";
+            togglePassword.textContent = show ? "Hide" : "Show";
         });
 
         // Restore remembered email
@@ -455,13 +352,15 @@
             rememberMe.checked = true;
         }
 
+        // Forgot password message
         forgotPassword.addEventListener("click", () => {
             message.style.color = "#64748b";
             message.textContent =
                 "Please contact your system administrator to reset your password.";
         });
 
-        loginForm.addEventListener("submit", async (event) => {
+        // Admin login
+        loginForm.addEventListener("submit", async event => {
             event.preventDefault();
 
             const email = emailInput.value.trim().toLowerCase();
@@ -488,15 +387,13 @@
                 }
 
                 if (!data.user || data.user.role !== "admin") {
-                    // The backend may have authenticated a normal user.
-                    // Do not grant admin access in browser storage.
                     await fetch("/api/auth/logout", {
                         method: "POST",
                         credentials: "same-origin"
                     });
 
                     throw new Error(
-                        "This account is not an administrator. Contact your system administrator."
+                        "This account is not an administrator."
                     );
                 }
 
@@ -506,8 +403,6 @@
                     localStorage.removeItem("campusfind_admin_email");
                 }
 
-                // This is only for existing page navigation checks.
-                // Server-side authorization still uses the session.
                 sessionStorage.setItem("adminLoggedIn", "true");
                 sessionStorage.setItem("userRole", "admin");
 
@@ -515,12 +410,15 @@
                 message.textContent = "Login successful. Opening dashboard...";
 
                 window.location.href = "./admindash.html";
+
             } catch (error) {
                 message.style.color = "#d92d20";
                 message.textContent = error.message ||
                     "Could not connect to the server. Please try again.";
+
                 passwordInput.value = "";
                 passwordInput.focus();
+
             } finally {
                 loginBtn.disabled = false;
                 loginBtn.textContent = "Sign In to Dashboard →";
@@ -529,4 +427,3 @@
     </script>
 </body>
 </html>
-```
