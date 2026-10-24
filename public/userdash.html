@@ -739,6 +739,9 @@
             <button class="nav-button" data-page="myclaims">
                 <span class="nav-icon">✓</span> My Claims
             </button>
+            <button class="nav-button" data-page="matches">
+    <span class="nav-icon">🔗</span> Potential Matches
+</button>
             <button class="nav-button" data-page="profile">
                 <span class="nav-icon">♙</span> My Profile
             </button>
@@ -1069,6 +1072,26 @@
                 </div>
             </section>
 
+            <!-- POTENTIAL MATCHES -->
+<section class="page" id="matches">
+    <div class="welcome">
+        <div>
+            <h1>Potential Matches 🔗</h1>
+            <p>Items that may match the belongings you reported.</p>
+        </div>
+        <button class="secondary-button" onclick="loadPotentialMatches()">
+            Refresh Matches
+        </button>
+    </div>
+
+    <div class="section-card">
+        <div id="matchesMessage" class="empty-state">
+            Loading potential matches...
+        </div>
+        <div id="potentialMatchesList"></div>
+    </div>
+</section>
+
             <!-- MY CLAIMS -->
             <section class="page" id="myclaims">
                 <div class="welcome">
@@ -1328,14 +1351,15 @@
     $("reportDate").max = todayISO();
     $("reportDate").value = todayISO();
 
-    const pageTitles = {
-        overview: "Student Dashboard",
-        browse: "Browse Items",
-        report: "Report an Item",
-        myreports: "My Reports",
-        myclaims: "My Claims",
-        profile: "My Profile"
-    };
+   const pageTitles = {
+    overview: "Student Dashboard",
+    browse: "Browse Items",
+    report: "Report an Item",
+    myreports: "My Reports",
+    myclaims: "My Claims",
+    matches: "Potential Matches",
+    profile: "My Profile"
+};
 
     function showPage(pageId) {
         const page = $(pageId);
@@ -1356,6 +1380,7 @@
         if (pageId === "myreports") renderMyReports();
         if (pageId === "myclaims") renderMyClaims();
         if (pageId === "overview") renderOverview();
+        if (pageId === "matches") loadPotentialMatches();
         if (pageId === "profile") renderProfile();
     }
 
@@ -1691,6 +1716,8 @@ $("reportForm").addEventListener("submit", async function (event) {
         $("myReportsEmpty").hidden = reports.length > 0;
     }
 
+    
+
     // --------------------------------------------------
     // 9. MY CLAIMS
     // --------------------------------------------------
@@ -1782,7 +1809,106 @@ async function renderMyClaims() {
     });
 
     refreshDashboard();
-    
+ async function loadPotentialMatches() {
+    const list = $("potentialMatchesList");
+    const message = $("matchesMessage");
+
+    list.innerHTML = "";
+    message.hidden = false;
+    message.textContent = "Searching for potential matches...";
+
+    try {
+        const response = await fetch("/api/items", {
+            credentials: "same-origin"
+        });
+
+        if (!response.ok) {
+            throw new Error("Could not load items.");
+        }
+
+        const items = await response.json();
+
+        // Find reports submitted by the logged-in student.
+        const myItems = items.filter(item =>
+            normalise(item.userId?.email) === studentEmail
+        );
+
+        if (!myItems.length) {
+            message.textContent =
+                "Submit a Lost or Found report to discover potential matches.";
+            return;
+        }
+
+        const results = [];
+
+        for (const item of myItems) {
+            const matchResponse = await fetch(
+                `/api/items/${item._id}/matches`,
+                { credentials: "same-origin" }
+            );
+
+            if (!matchResponse.ok) continue;
+
+            const data = await matchResponse.json();
+
+            for (const match of (data.matches || [])) {
+                results.push({
+                    ...match,
+                    reportedItem: item
+                });
+            }
+        }
+
+        // Avoid displaying the same pair twice.
+        const uniqueResults = [
+            ...new Map(
+                results.map(match => [
+                    [String(match.reportedItem._id),
+                     String(match.item._id)].sort().join("-"),
+                    match
+                ])
+            ).values()
+        ];
+
+        if (!uniqueResults.length) {
+            message.textContent =
+                "No strong matches found yet. Check again when more items are reported.";
+            return;
+        }
+
+        message.hidden = true;
+
+        list.innerHTML = uniqueResults.map(match => `
+            <div style="padding:16px 0;border-bottom:1px solid #e4e8f1">
+                <h3>${escapeHTML(match.item.title)}</h3>
+                <p>
+                    <strong>Match score:</strong> ${match.score}%
+                </p>
+                <p>
+                    <strong>Category:</strong>
+                    ${escapeHTML(match.item.category || "—")}
+                </p>
+                <p>
+                    <strong>Location:</strong>
+                    ${escapeHTML(match.item.location || "—")}
+                </p>
+                <p>
+                    <strong>Reported type:</strong>
+                    ${escapeHTML(match.item.type || "—")}
+                </p>
+                <p>
+                    <strong>Matches your report:</strong>
+                    ${escapeHTML(match.reportedItem.title)}
+                </p>
+            </div>
+        `).join("");
+
+    } catch (error) {
+        console.error("Potential matches error:", error);
+        message.textContent =
+            "Could not load matches. Please check your server and try again.";
+    }
+}   
 
 
 </script>
